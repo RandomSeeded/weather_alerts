@@ -1,0 +1,27 @@
+[27/Feb/2017:08:49:24 -0800], module traverse failed: mod_dir:do => 
+   Error Type:  error
+   Error:       {badmatch,{error,enoent}}
+   Stack trace: [{mod_dir,format,2,[{file,"mod_dir.erl"},{line,139}]},
+                 {mod_dir,header,2,[{file,"mod_dir.erl"},{line,135}]},
+                 {mod_dir,dir,3,[{file,"mod_dir.erl"},{line,112}]},
+                 {mod_dir,do_dir,1,[{file,"mod_dir.erl"},{line,69}]},
+                 {httpd_response,traverse_modules,2,
+                     [{file,"httpd_response.erl"},{line,73}]},
+                 {httpd_response,generate_and_send_response,1,
+                     [{file,"httpd_response.erl"},{line,41}]},
+                 {httpd_request_handler,handle_response,1,
+                     [{file,"httpd_request_handler.erl"},{line,558}]},
+                 {gen_server,try_dispatch,4,
+                     [{file,"gen_server.erl"},{line,601}]}]
+[27/Feb/2017:08:49:24 -0800] access to /favicon.ico failed for 127.0.0.1, reason: 
+"httpd_file: Can't access www/favicon.ico: File not found"
+[27/Feb/2017:08:49:40 -0800] access to /erl/hello_world:service failed for 127.0.0.1, reason: 
+"Not found"
+[27/Feb/2017:08:50:29 -0800] access to /erl/hello_world:service failed for 127.0.0.1, reason: 
+"Not found"
+[27/Feb/2017:08:50:29 -0800] access to /favicon.ico failed for 127.0.0.1, reason: 
+"httpd_file: Can't access www/favicon.ico: File not found"
+[27/Feb/2017:08:50:34 -0800] access to /erl/hello_world failed for 127.0.0.1, reason: 
+["hello_world"]
+[27/Feb/2017:08:50:37 -0800] access to /erl/hello_world:service failed for 127.0.0.1, reason: 
+"Not found"
