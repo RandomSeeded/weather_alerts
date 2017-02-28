@@ -1,9 +1,0 @@
-127.0.0.1 - - [27/Feb/2017:08:49:24 -0800] "GET /favicon.ico HTTP/1.1" 404 0
-127.0.0.1 - - [27/Feb/2017:08:49:40 -0800] "GET /erl/hello_world:service HTTP/1.1" 404 0
-127.0.0.1 - - [27/Feb/2017:08:50:29 -0800] "GET /erl/hello_world:service HTTP/1.1" 404 0
-127.0.0.1 - - [27/Feb/2017:08:50:29 -0800] "GET /favicon.ico HTTP/1.1" 404 0
-127.0.0.1 - - [27/Feb/2017:08:50:34 -0800] "GET /erl/hello_world HTTP/1.1" 400 0
-127.0.0.1 - - [27/Feb/2017:08:50:37 -0800] "GET /erl/hello_world:service HTTP/1.1" 404 0
-127.0.0.1 - - [27/Feb/2017:08:52:04 -0800] "GET /erl/hello_world:service HTTP/1.1" 200 39
-127.0.0.1 - - [27/Feb/2017:08:59:22 -0800] "GET /erl/hello_world:service HTTP/1.1" 200 39
-127.0.0.1 - - [27/Feb/2017:08:59:37 -0800] "GET /erl/index.html HTTP/1.1" 400 0
