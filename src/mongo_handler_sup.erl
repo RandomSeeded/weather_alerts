@@ -3,8 +3,8 @@
 -behavior(supervisor).
 
 % From below copy/pasted from learn you some erlang
+% (Could be made more specific for our function)
 start(Mod, Args) ->
-  io:format("MONGO HANDLER SUP START"),
   spawn(?MODULE, init, [{Mod, Args}]).
 
 start_link(Mod, Args) ->
