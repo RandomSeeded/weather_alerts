@@ -9,11 +9,11 @@
 
 ##IMPLEMENTATION - v0
 
-- static webpage (for now), with a single form (input email), with placeholder (one option) for spot selection
+- ~~static webpage (for now), with a single form (input email), with placeholder (one option) for spot selection~~
 - erlang webserver which
-  - serves static webpage
-  - has route for email adding
-  - has database (file?) for email address storing
+  - ~~serves static webpage~~
+  - ~~has route for email adding~~
+  - ~~has database (file?) for email address storing~~
 - cronjob (language? probably still erlang for sake of learning)
   - hits surfline API
   - checks if criteria are met
