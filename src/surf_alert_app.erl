@@ -1,0 +1,11 @@
+-module(surf_alert_app).
+-behaviour(application).
+
+-export([start/2]).
+-export([stop/1]).
+
+start(_Type, _Args) ->
+	surf_alert_sup:start_link().
+
+stop(_State) ->
+	ok.
