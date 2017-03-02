@@ -10,7 +10,10 @@ init(Req0, State) ->
   Req = handle(Method, HasBody, Req0),
   {ok, Req, State}.
 
-handle(<<"POST">>, true, Req) ->
+handle(<<"POST">>, true, Req0) ->
+  {ok, KeyValues, Req} = cowboy_req:read_urlencoded_body(Req0),
+  Email = proplists:get_value(<<"email">>, KeyValues),
+  mongo_handler:add_email(Email),
   cowboy_req:reply(200, #{
     <<"content-type">> => <<"text/plain">>
   }, "OK", Req);

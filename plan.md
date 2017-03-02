@@ -30,3 +30,7 @@
 - specify your own criteria for alerts
 - change how much advanced notice you want for alerts
 
+##NOTES
+- for now static HTML means redirect on form fill, but easy enough to change that in future (API routes)
+- we will want to return success / failure depending on what we receive from our worker
+- what does our worker do? Adds to database
