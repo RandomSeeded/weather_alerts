@@ -6,4 +6,5 @@ relx.config
 surf_alert.d
 .erlang.mk/
 erlang.mk
+deps
 
