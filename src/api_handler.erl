@@ -13,12 +13,10 @@ init(Req0, State) ->
 handle(<<"POST">>, true, Req) ->
   cowboy_req:reply(200, #{
     <<"content-type">> => <<"text/plain">>
-  }, "Hello world!", Req);
+  }, "OK", Req);
 handle(<<"POST">>, false, Req) ->
-  %cowboy_req:reply(400, Req);
-  cowboy_req:reply(200, #{
+  cowboy_req:reply(400, #{
     <<"content-type">> => <<"text/plain">>
-  }, "Hello world!", Req);
+  }, "Invalid request", Req);
 handle(_Method, _HasBody, Req) ->
-  io:format("Method~p~n",[_Method]),
   cowboy_req:reply(405, Req).
