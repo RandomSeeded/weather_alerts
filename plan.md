@@ -30,7 +30,15 @@
 - specify your own criteria for alerts
 - change how much advanced notice you want for alerts
 
-##NOTES
+##MISC
 - for now static HTML means redirect on form fill, but easy enough to change that in future (API routes)
 - we will want to return success / failure depending on what we receive from our worker
 - what does our worker do? Adds to database
+- We now have a mongo handler, but not in a very canonically-Erlang way:
+  - We attempt to insert, but we can totally crash, and if we dont, we always return OK.
+- But beyond the general terrible hackiness of this code, we also have the problem that we are re-establishing a connection to the mongo server on every single request, which is just dumb.
+- We should have a running mongo process which is responsible for establishing this connection
+- We should have a supervisor on this process which restarts it if ever it dies
+- We should have exposed module methods which will reach out to the running process (named process!)
+- This method will be responsible for adding emails
+

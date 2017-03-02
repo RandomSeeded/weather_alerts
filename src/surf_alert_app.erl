@@ -5,6 +5,8 @@
 -export([stop/1]).
 
 start(_Type, _Args) ->
+    % SUPER JANKY HACK UNTIL I CAN FIGURE OUT HOW TO START ON STARTUP
+    _MongoSup = mongo_handler_sup:start(mongo_handler, []),
     Dispatch = cowboy_router:compile([
         {'_', [
           {"/", cowboy_static, {priv_file, surf_alert, "index.html"}},
