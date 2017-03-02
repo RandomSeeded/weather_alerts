@@ -6,7 +6,10 @@
 
 start(_Type, _Args) ->
     Dispatch = cowboy_router:compile([
-        {'_', [{"/", index_handler, []}]}
+        {'_', [
+          {"/", cowboy_static, {priv_file, surf_alert, "index.html"}},
+          {"/email-submit.html", api_handler, []}
+        ]}
     ]),
     {ok, _} = cowboy:start_clear(my_http_listener, 100,
         [{port, 8080}],
