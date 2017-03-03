@@ -8,3 +8,5 @@ surf_alert.d
 erlang.mk
 deps
 *.beam
+.passwords
+*.dump
