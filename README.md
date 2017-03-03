@@ -17,9 +17,9 @@
   - ~~has route for email adding~~
   - ~~has database (file?) for email address storing~~
 - cronjob (language? probably still erlang for sake of learning)
-  - hits surfline API
-  - checks if criteria are met
-  - sends emails
+  - ~~hits surfline API~~
+  - ~~checks if criteria are met~~
+  - ~~sends emails~~
 
 ##IMPROVEMENTS
 
