@@ -1,5 +1,5 @@
 -module(surfline_api).
--compile(export_all).
+-export([check_forecast_good/0]).
 
 get_forecast() ->
   inets:start(),
@@ -26,7 +26,7 @@ check_forecast_good() ->
       true;
     "good" ->
       true;
-    "poor" ->
+    _ ->
       false
   end.
 
