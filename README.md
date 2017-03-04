@@ -32,7 +32,21 @@
 - specify your own criteria for alerts
 - change how much advanced notice you want for alerts
 
+##NEXT STEPS
+- email sending should be turned into its own process instead of a script
+- job which wraps checking the API and sending emails
+  - We check the API, and if it's good, we continue by:
+    - reading emails from mongo
+    - spinning up multiple email sending processes in parallel, each of which sends an email to the recipient
+- one issue: sending emails requires reading from Mongo, which is interesting because the mongo handler is in a separate directory. Figure out how to best handle this
+
 ##MISC
-- for now static HTML means redirect on form fill, but easy enough to change that in future (API routes)
-- we will want to return success / failure depending on what we receive from our worker
+
+Factor out the surfline API checker to be its own process. Options:
+1) Run itself on repeat and save to cache, when invoked retrieve from cache
+2) Don't run on repeat, but save to cache, when invoked re-fetch if cache too old
+
+What's the point? Are they really different than just running the whole job periodically?
+- we can fallback to cache in case the API changes on us
+- we can factor all the icky dealing with surfline API logic out into a separate process and therefore not break everything if we don't happy path
 
