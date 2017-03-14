@@ -3,7 +3,6 @@ ebin
 priv
 surf_alert.d
 .erlang.mk/
-erlang.mk
 deps
 *.beam
 .passwords
