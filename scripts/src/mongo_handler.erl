@@ -24,6 +24,7 @@ handle_call(get_emails, _From, MyDB) ->
   AllEmails = [maps:get(<<"email">>, Map) || {Map} <- AllEntries],
   {reply, AllEmails, MyDB}.
 
+% You can nuke this in favor of mc_cursor:rest(Cursor)
 find_all(Acc, Cursor) ->
   Record = mc_cursor:next(Cursor),
   case Record of 
