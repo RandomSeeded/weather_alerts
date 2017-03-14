@@ -34,14 +34,12 @@ find_all(Acc, Cursor) ->
       find_all([Record|Acc], Cursor) 
   end.
 
-handle_info(Info, State) -> % calling mc_cursor:next when there are none remaining basically triggers a try/catch which issues this info event. Ideally this would be pattern matched to only catch that.
+handle_info({ack, _Pid, {error, normal}}, State) -> % calling mc_cursor:next when there are none remaining basically triggers a try/catch which issues this info event.
+  {noreply, State};
+handle_info(Info, State) ->
   io:format("Received handle request for info ~p state ~p~n", [Info, State]),
   {noreply, State}.
 
-
 get_emails(Pid) ->
   gen_server:call(Pid, get_emails).
-
-terminate(_, _State) ->
-  ok.
 
