@@ -33,7 +33,7 @@
 - change how much advanced notice you want for alerts
 
 ##NEXT STEPS
-- email sending should be turned into its own process instead of a script
+- **email sending should be turned into its own process instead of a script**
 - job which wraps checking the API and sending emails
   - We check the API, and if it's good, we continue by:
     - reading emails from mongo
