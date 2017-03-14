@@ -1,7 +1,6 @@
 _rel
 ebin
 priv
-relx.config
 surf_alert.d
 .erlang.mk/
 erlang.mk
