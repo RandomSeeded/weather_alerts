@@ -19,14 +19,9 @@ handle_call(get_emails, _From, MyDB) ->
   io:format("Retrieving emails...~n"),
   Connection = MyDB#db_info.connection,
   Collection = <<"emails">>,
-  % Res = mc_worker_api:find_one(Connection, Collection, #{}),
-  % Email = maps:get(<<"email">>, Res),
-  % {reply, Res, MyDB}.
-  {ok, Cursor} = mc_worker_api:find(Connection, Collection, #{}), %% CHANGE TO FIND ALL (need to work w/ mc_cursor)
+  {ok, Cursor} = mc_worker_api:find(Connection, Collection, #{}),
   AllEntries = find_all([], Cursor),
   AllEmails = [maps:get(<<"email">>, Map) || {Map} <- AllEntries],
-  % {Map} = hd(AllEntries),
-  % Email = maps:get(<<"email">>, Map),
   {reply, AllEmails, MyDB}.
 
 find_all(Acc, Cursor) ->
