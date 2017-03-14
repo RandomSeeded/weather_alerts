@@ -34,6 +34,7 @@
 
 ##NEXT STEPS
 - **email sending should be turned into its own process instead of a script**
+  - note that when using scripts/src must run with erl -pa ../ebin ../deps/*/ebin
 - job which wraps checking the API and sending emails
   - We check the API, and if it's good, we continue by:
     - reading emails from mongo
