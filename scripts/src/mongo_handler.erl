@@ -19,9 +19,34 @@ handle_call(get_emails, _From, MyDB) ->
   io:format("Retrieving emails...~n"),
   Connection = MyDB#db_info.connection,
   Collection = <<"emails">>,
-  Res = mc_worker_api:find_one(Connection, Collection, #{}), %% CHANGE TO FIND ALL (need to work w/ mc_cursor)
-  {reply, Res, MyDB}.
+  % Res = mc_worker_api:find_one(Connection, Collection, #{}),
+  % Email = maps:get(<<"email">>, Res),
+  % {reply, Res, MyDB}.
+  {ok, Cursor} = mc_worker_api:find(Connection, Collection, #{}), %% CHANGE TO FIND ALL (need to work w/ mc_cursor)
+  AllEntries = find_all([], Cursor),
+  AllEmails = [maps:get(<<"email">>, Map) || {Map} <- AllEntries],
+  % {Map} = hd(AllEntries),
+  % Email = maps:get(<<"email">>, Map),
+  {reply, AllEmails, MyDB}.
+
+find_all(Acc, Cursor) ->
+  Record = mc_cursor:next(Cursor),
+  case Record of 
+    error ->
+      mc_cursor:close(Cursor),
+      Acc; 
+    _ -> 
+      find_all([Record|Acc], Cursor) 
+  end.
+
+handle_info(Info, State) -> % calling mc_cursor:next when there are none remaining basically triggers a try/catch which issues this info event. Ideally this would be pattern matched to only catch that.
+  io:format("Received handle request for info ~p state ~p~n", [Info, State]),
+  {noreply, State}.
+
 
 get_emails(Pid) ->
   gen_server:call(Pid, get_emails).
+
+terminate(_, _State) ->
+  ok.
 
