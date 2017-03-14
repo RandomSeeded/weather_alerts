@@ -30,6 +30,13 @@ loop(MyDB) ->
       mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email}]),
       Pid ! {MsgRef, ok},
       loop(MyDB);
+    {Pid, MsgRef, get_emails} ->
+      io:format("Retrieving emails...~n"),
+      Connection = MyDB#db_info.connection,
+      Collection = <<"emails">>,
+      mc_worker_api:find(Connection, Collection, [#{}]),
+      Pid ! {MsgRef, ok},
+      loop(MyDB);
     Unknown ->
       io:format("Unknown message ~p~n", [Unknown]),
       loop(MyDB)
@@ -48,3 +55,4 @@ add_email(Email) ->
   after 2000 ->
       timeout
   end.
+
