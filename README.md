@@ -1,6 +1,6 @@
 #Emails for when the surf's up
 
-##What does v0 look like?
+## What does v0 look like?
 
 - just a single spot (easily extensible to be multiple spots later)
 - a single amount of advance notice (say noon day before?, can extend to make multiple amounts of advance notice later)
@@ -9,7 +9,7 @@
 - sends you an email if the surf meets the criteria
 - unsubscribe (removes all alerts)
 
-##IMPLEMENTATION - v0
+## IMPLEMENTATION - v0
 
 - ~~static webpage (for now), with a single form (input email), with placeholder (one option) for spot selection~~
 - ~~erlang webserver which~~
@@ -21,7 +21,7 @@
   - ~~checks if criteria are met~~
   - ~~sends emails~~
 
-##IMPROVEMENTS
+## IMPROVEMENTS
 
 - spot search (nobody likes having to do the shit select from region nonsense)
 - multiple spots
@@ -32,7 +32,7 @@
 - specify your own criteria for alerts
 - change how much advanced notice you want for alerts
 
-##NEXT STEPS
+## NEXT STEPS
 - **email sending should be turned into its own process instead of a script**
   - note that when using scripts/src must run with erl -pa ../ebin ../deps/*/ebin
 - job which wraps checking the API and sending emails
@@ -41,7 +41,7 @@
     - spinning up multiple email sending processes in parallel, each of which sends an email to the recipient
 - one issue: sending emails requires reading from Mongo, which is interesting because the mongo handler is in a separate directory. Figure out how to best handle this
 
-##MISC
+## MISC
 
 Factor out the surfline API checker to be its own process. Options:
 1) Run itself on repeat and save to cache, when invoked retrieve from cache
