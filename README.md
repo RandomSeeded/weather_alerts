@@ -1,4 +1,4 @@
-#Emails for when the surf's up
+# Emails for when the surf's up
 
 ## What does v0 look like?
 
