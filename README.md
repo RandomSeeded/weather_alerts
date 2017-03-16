@@ -33,13 +33,7 @@
 - change how much advanced notice you want for alerts
 
 ## NEXT STEPS
-- **email sending should be turned into its own process instead of a script**
-  - note that when using scripts/src must run with erl -pa ../ebin ../deps/*/ebin
-- job which wraps checking the API and sending emails
-  - We check the API, and if it's good, we continue by:
-    - reading emails from mongo
-    - spinning up multiple email sending processes in parallel, each of which sends an email to the recipient
-- one issue: sending emails requires reading from Mongo, which is interesting because the mongo handler is in a separate directory. Figure out how to best handle this
+- determine why web_server `make run` is functional on desktop but not laptop (files not included?)
 
 ## MISC
 
