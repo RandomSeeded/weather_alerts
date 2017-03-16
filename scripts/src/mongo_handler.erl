@@ -5,7 +5,7 @@
     connection}).
 
 start_link() ->
-  gen_server:start_link(?MODULE, init, []).
+  gen_server:start_link(?MODULE, init, []). % TODO: this should prob be changed to [], []
 
 % This function: initial setup and then loops
 init(_DBInfo) ->
