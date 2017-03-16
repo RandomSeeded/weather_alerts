@@ -20,22 +20,11 @@ handle_call(get_emails, _From, MyDB) ->
   Connection = MyDB#db_info.connection,
   Collection = <<"emails">>,
   {ok, Cursor} = mc_worker_api:find(Connection, Collection, #{}),
-  AllEntries = find_all([], Cursor),
-  AllEmails = [maps:get(<<"email">>, Map) || {Map} <- AllEntries],
+  AllEntries = mc_cursor:rest(Cursor),
+  AllEmails = [maps:get(<<"email">>, Map) || Map <- AllEntries],
   {reply, AllEmails, MyDB}.
 
-% You can nuke this in favor of mc_cursor:rest(Cursor) - and then you can also get rid of the handle_info
-find_all(Acc, Cursor) ->
-  Record = mc_cursor:next(Cursor),
-  case Record of 
-    error ->
-      mc_cursor:close(Cursor),
-      Acc; 
-    _ -> 
-      find_all([Record|Acc], Cursor) 
-  end.
-
-handle_info({ack, _Pid, {error, normal}}, State) -> % calling mc_cursor:next when there are none remaining basically triggers a try/catch which issues this info event.
+handle_info({ack, _Pid, {error, normal}}, State) -> % This is triggered by m_cursor:rest; it represents no more entries in the db
   {noreply, State};
 handle_info(Info, State) ->
   io:format("Received handle request for info ~p state ~p~n", [Info, State]),
