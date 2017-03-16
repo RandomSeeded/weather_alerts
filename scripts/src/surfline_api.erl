@@ -19,6 +19,7 @@ start_link() ->
 handle_call(check_forecast_good, _From, []) ->
   Body = get_forecast(),
   Tomorrows_Forecast = decode_JSON(Body),
+  io:format("Tomorrows_Forecast ~p~n", [Tomorrows_Forecast]),
   Response = case Tomorrows_Forecast of
     "fair" ->
       true;
