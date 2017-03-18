@@ -28,7 +28,7 @@ start_link() ->
   gen_server:start_link(?MODULE, [], []).
 
 internal_run(SurflinePid) ->
-  io:format("Checking Forecast"),
+  io:format("Checking Forecast~n"),
   Forecast = surfline_api:check_forecast_good(SurflinePid),
   send_emails(Forecast).
 
