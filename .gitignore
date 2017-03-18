@@ -1,6 +1,5 @@
 _rel
 ebin
-priv
 surf_alert.d
 .erlang.mk/
 deps
