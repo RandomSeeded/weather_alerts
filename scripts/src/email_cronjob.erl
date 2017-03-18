@@ -36,3 +36,8 @@ handle_cast(run, SurflinePid) ->
 run(Pid) ->
   gen_server:cast(Pid, run).
 
+run_repeat(Pid, Delay) ->
+  run(Pid),
+  timer:sleep(Delay * 3600000), % convert to hours
+  run_repeat(Pid, Delay).
+
