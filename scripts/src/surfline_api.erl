@@ -18,12 +18,14 @@ start_link() ->
 
 handle_call(check_forecast_good, _From, []) ->
   Body = get_forecast(),
-  Tomorrows_Forecast = decode_JSON(Body),
-  io:format("Tomorrows_Forecast ~p~n", [Tomorrows_Forecast]),
-  Response = case Tomorrows_Forecast of
+  ThreeDayForecast = decode_JSON(Body),
+  io:format("ThreeDayForecast ~p~n", [ThreeDayForecast]),
+  Response = case ThreeDayForecast of
     "fair" ->
       true;
     "good" ->
+      true;
+    "fair to good" ->
       true;
     _ ->
       false
@@ -42,7 +44,7 @@ test(Pid) ->
 %   gen_server:call(Pid, get_forecast).
 get_forecast() ->
   inets:start(),
-  Url = "http://api.surfline.com/v1/forecasts/2957?resources=analysis&days=2",
+  Url = "http://api.surfline.com/v1/forecasts/2957?resources=analysis&days=4",
   {ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}} = httpc:request(Url),
   Body.
 
@@ -52,8 +54,9 @@ decode_JSON(Body) ->
   {struct, JSONData} = Struct,
   % This needs to actually look it up (lists:keyfind)
   {"Analysis", {struct, Analysis}} = lists:nth(5, JSONData),
-  {"generalCondition", {array,[_Todays_Forecast,Tomorrows_Forecast]}} = lists:nth(9, Analysis),
-  Tomorrows_Forecast.
+  {"generalCondition", {array, RegionalForecasts}} = lists:nth(9, Analysis),
+  ThreeDayForecast = lists:nth(4, RegionalForecasts), % Get the forecast for three days out
+  ThreeDayForecast.
 
 % Would be expanded for more criteria n stuff
 % Additionally, this should be made somehow fault tolerant.
