@@ -1,5 +1,5 @@
 -module(email_cronjob).
-
+-behavior(gen_server).
 -compile(export_all).
 
 % What should this look like?
@@ -20,11 +20,19 @@ send_emails(_) ->
   io:format("Forecast is not good, sleeping~n"),
   ok.
 
-start() ->
-  {ok, Pid} = surfline_api:start_link(),
-  Forecast = surfline_api:check_forecast_good(Pid),
-  send_emails(Forecast),
-  ok.
+init([]) ->
+  {ok, SurflinePid} = surfline_api:start_link(),
+  {ok, SurflinePid}.
 
-  % erlang:halt(0). % there's probably a better way than this to end & exit...but I don't know it :shrug:
+start_link() ->
+  gen_server:start_link(?MODULE, [], []).
+
+handle_cast(run, SurflinePid) ->
+  io:format("Checking Forecast"),
+  Forecast = surfline_api:check_forecast_good(SurflinePid),
+  send_emails(Forecast),
+  {noreply, SurflinePid}.
+
+run(Pid) ->
+  gen_server:cast(Pid, run).
 
