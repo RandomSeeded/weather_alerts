@@ -27,17 +27,30 @@ init([]) ->
 start_link() ->
   gen_server:start_link(?MODULE, [], []).
 
-handle_cast(run, SurflinePid) ->
+internal_run(SurflinePid) ->
   io:format("Checking Forecast"),
   Forecast = surfline_api:check_forecast_good(SurflinePid),
-  send_emails(Forecast),
-  {noreply, SurflinePid}.
+  send_emails(Forecast).
 
+internal_run_repeat(SurflinePid, Delay) ->
+  internal_run(SurflinePid),
+  timer:sleep(Delay * 3600000), % convert to hours
+  internal_run_repeat(SurflinePid, Delay).
+
+handle_cast(run, SurflinePid) ->
+  internal_run(SurflinePid),
+  {noreply, SurflinePid};
+handle_cast({run_repeat, Delay}, SurflinePid) ->
+  internal_run_repeat(SurflinePid, Delay),
+  {noreply, SurflinePid}.
+  
 run(Pid) ->
   gen_server:cast(Pid, run).
 
 run_repeat(Pid, Delay) ->
-  run(Pid),
-  timer:sleep(Delay * 3600000), % convert to hours
-  run_repeat(Pid, Delay).
+  gen_server:cast(Pid, {run_repeat, Delay}).
+
+% TODO: hook something up to this. It's difficult to get gen_server to trigger this call with the current state though.
+code_change(_OldVsn, State, _Extra) ->
+  {ok, State}.
 
