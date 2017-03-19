@@ -30,6 +30,13 @@ loop(MyDB) ->
       mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email}]),
       Pid ! {MsgRef, ok},
       loop(MyDB);
+    {Pid, MsgRef, {remove_email, Email}} ->
+      io:format("removing email ~n"),
+      Connection = MyDB#db_info.connection,
+      Collection = <<"emails">>,
+      mc_worker_api:delete(Connection, Collection, #{<<"email">> => Email}),
+      Pid ! {MsgRef, ok},
+      loop(MyDB);
     {Pid, MsgRef, get_emails} ->
       io:format("Retrieving emails...~n"),
       Connection = MyDB#db_info.connection,
@@ -56,3 +63,12 @@ add_email(Email) ->
       timeout
   end.
 
+remove_email(Email) ->
+  MsgRef = make_ref(),
+  ?MODULE ! {self(), MsgRef, {remove_email, Email}},
+  receive
+    {MsgRef, ok} ->
+      ok
+  after 2000 ->
+      timeout
+  end.
