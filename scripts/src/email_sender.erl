@@ -17,7 +17,7 @@ init([]) ->
 
 handle_cast({send_email, Recipient}, Password) ->
   gen_smtp_client:send({"SurfAlertMailer@gmail.com",
-      [Recipient], "Subject: New Test123456"},
+      [Recipient], io_lib:format("Subject: Surf Alert\r\nFrom: Surf Alert Daemon\r\nTo: ~p\r\n\r\nSurf incoming! http://www.surfline.com/surf-forecasts/northern-california/sf-san-mateo-county_2957", [Recipient])},
     [{relay, "smtp.gmail.com"},
       {ssl, true},
       {username, "SurfAlertMailer@gmail.com"},
