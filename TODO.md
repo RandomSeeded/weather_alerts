@@ -22,7 +22,5 @@ What's the point? Are they really different than just running the whole job peri
 
 ## Immediate next steps
 
-- determine why web_server `make run` is functional on desktop but not laptop (files not included?)
-- make "fair to good" count as good
-- implement either timeout or completion & halt & cronjob for repeated runs
-- change forecast to be 3 days out
+- simple run script instead of command within erl shell
+
