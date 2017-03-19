@@ -5,8 +5,14 @@
     </title>
   </head>
   <body>
-    <p>Alerts for Ocean Beach, San Francisco</p>
+    <p>Alerts</p>
     <form action="api/email-submit" method="post">
+      <select name="Region">
+        <option>Humboldt County</option>
+        <option>Mendocino County</option>
+        <option>Sonoma County</option>
+        <option>SF / San Mateo County</option>
+      </select>
       Email: <input type="text" name="email">
       <input type="submit" value="submit">
     </form>

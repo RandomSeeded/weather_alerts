@@ -17,7 +17,7 @@
                surfline_spotId=2948,
                display_name="Marin County"},
          #spot{internal_id=mendocino,
-               surfline_url="http://www.surfline.com/surf-forecasts/northern-california/sonoma-county_2947/",
+               surfline_url="http://www.surfline.com/surf-forecasts/northern-california/mendocino-county_2947/",
                surfline_spotId=2947,
                display_name="Sonoma County"},
          #spot{internal_id=sf,
