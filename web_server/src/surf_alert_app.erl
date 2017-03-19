@@ -4,7 +4,15 @@
 -export([start/2]).
 -export([stop/1]).
 
+-include("surfline_definitions.hrl").
+
 start(_Type, _Args) ->
+    % Example HRL usage and lookup
+    % Test = ?Surfline_definitions,
+    % io:format("Test ~p~n", [Test]),
+    % SF = lists:keyfind(sf, #spot.internal_id, Test),
+    % io:format("SF ~p~n", [SF]),
+
     % SUPER JANKY HACK UNTIL I CAN FIGURE OUT HOW TO START ON STARTUP
     _MongoSup = mongo_handler_sup:start(mongo_handler, []),
     Dispatch = cowboy_router:compile([
