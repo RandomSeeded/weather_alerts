@@ -7,3 +7,7 @@ Currently is limited to:
 - 3 day window
 - Single criteria (good+)
 
+See it live in action: natewillard.com/projects/surf-alert/
+
+
+
