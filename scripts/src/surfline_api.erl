@@ -17,10 +17,9 @@ start_link() ->
 % Fundamentally get_forecast is for now a synchronous operation
 
 handle_call({check_forecast_good, SpotId}, _From, []) ->
-  io:format("handle call cfg ~n"),
   Body = get_forecast(SpotId),
   ThreeDayForecast = decode_JSON(Body),
-  io:format("ThreeDayForecast ~p~n", [ThreeDayForecast]),
+  io:format("ThreeDayForecast ~p ~p~n", [ThreeDayForecast, SpotId]),
   Response = case ThreeDayForecast of
     "fair" ->
       true;
@@ -46,9 +45,7 @@ test(Pid) ->
 get_forecast(SpotId) ->
   inets:start(),
   SpotId_Str = integer_to_list(SpotId),
-  io:format("SpotId ~p~n", [SpotId]),
   Url = "http://api.surfline.com/v1/forecasts/" ++ SpotId_Str ++ "?resources=analysis&days=4",
-  io:format("Url ~p~n", [Url]),
   {ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}} = httpc:request(Url),
   Body.
 
@@ -68,6 +65,5 @@ decode_JSON(Body) ->
 
 % Client methods (currently broken pending gen_server revamp)
 check_forecast_good(Pid, SpotId) ->
-  io:format("check forecast good ~n"),
   gen_server:call(Pid, {check_forecast_good, SpotId}).
 

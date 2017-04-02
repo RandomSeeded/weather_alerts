@@ -22,34 +22,21 @@ send_emails(_) ->
   ok.
 
 init([]) ->
-  % {ok, SurflinePid} = surfline_api:start_link(),
   {ok, []}.
 
 start_link() ->
   gen_server:start_link(?MODULE, [], []).
 
-% OK so this needs to be modified to have multi-region support.
-% What do we want architecture to look like?
-% We invoke API function single time.
-% It loops through all regions
-% For each region it spawns a separate surfline-checking process, and waits for a repsonse
-% It then invokes send_emails based on that response
 internal_run() ->
   io:format("Checking Forecast~n"),
-  % Now we need to make this lists:each style.
-  % Sync? Async?
-  % It's easiest to leave this sync, but then if one fails they all fail, which is shit city.
-  % Additionally, the map is synchronous, which is also shit city.
   lists:foreach(fun(S) ->
                     SpotId = S#spot.surfline_spotId,
                     io:format("SpotId ~p~n", [SpotId]),
                     {ok, SurflinePid} = surfline_api:start_link(),
                     Forecast = surfline_api:check_forecast_good(SurflinePid, SpotId),
-                    send_emails(Forecast)
+                    send_emails(Forecast),
+                    exit(SurflinePid, normal)
                 end, ?Surfline_definitions).
-  % So fundamentally we need to start a new process for each caller, and tell that process to do shit.
-  % This is not a good clean model because these processes won't necessarily exit, this is shit city.
-  % Instead what we would probably want would be a pool of surfline API check-ers, and a pool of email senders. We would just send messages to each.
 
 internal_run_repeat(Delay) ->
   internal_run(),
@@ -69,7 +56,6 @@ run(Pid) ->
 run_repeat(Pid, Delay) ->
   gen_server:cast(Pid, {run_repeat, Delay}).
 
-% TODO: hook something up to this. It's difficult to get gen_server to trigger this call with the current state though.
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
