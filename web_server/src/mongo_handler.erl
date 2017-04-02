@@ -1,5 +1,6 @@
 -module(mongo_handler).
 -compile(export_all).
+-include("surfline_definitions.hrl").
 -record(db_info, {collection="emails",
     connection}).
 
@@ -24,10 +25,13 @@ loop(MyDB) ->
       io:format("Shutdown~n"),
       ok;
     {Pid, MsgRef, {add_email, {Email, Region}}} ->
-      io:format("adding email~n"),
+      io:format("adding email ~p ~p~n", [Email, Region]),
+      ListRegion = binary_to_list(Region),
+      InternalRegion = lists:keyfind(ListRegion, #spot.display_name, ?Surfline_definitions),
+      RegionId = InternalRegion#spot.internal_id,
       Connection = MyDB#db_info.connection,
       Collection = <<"emails">>,
-      mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => Region}]),
+      mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => RegionId}]),
       Pid ! {MsgRef, ok},
       loop(MyDB);
     {Pid, MsgRef, {remove_email, Email}} ->
