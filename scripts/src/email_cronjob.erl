@@ -40,17 +40,16 @@ internal_run() ->
   % Sync? Async?
   % It's easiest to leave this sync, but then if one fails they all fail, which is shit city.
   % Additionally, the map is synchronous, which is also shit city.
-  SurflineDefinitions = ?Surfline_definitions,
-  io:format("SurflineDefinitions ~p~n", [SurflineDefinitions]),
-  lists:foreach(fun(N) ->
-                    io:format("N ~p~n", [N])
-                end, ?Surfline_definitions),
-  {ok, SurflinePid} = surfline_api:start_link(),
-  Forecast = surfline_api:check_forecast_good(SurflinePid),
+  lists:foreach(fun(S) ->
+                    SpotId = S#spot.surfline_spotId,
+                    io:format("SpotId ~p~n", [SpotId]),
+                    {ok, SurflinePid} = surfline_api:start_link(),
+                    Forecast = surfline_api:check_forecast_good(SurflinePid, SpotId),
+                    send_emails(Forecast)
+                end, ?Surfline_definitions).
   % So fundamentally we need to start a new process for each caller, and tell that process to do shit.
   % This is not a good clean model because these processes won't necessarily exit, this is shit city.
   % Instead what we would probably want would be a pool of surfline API check-ers, and a pool of email senders. We would just send messages to each.
-  send_emails(Forecast).
 
 internal_run_repeat(Delay) ->
   internal_run(),
