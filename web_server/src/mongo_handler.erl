@@ -1,5 +1,6 @@
 -module(mongo_handler).
 -compile(export_all).
+-include("surfline_definitions.hrl").
 -record(db_info, {collection="emails",
     connection}).
 
@@ -23,11 +24,14 @@ loop(MyDB) ->
     {shutdown} ->
       io:format("Shutdown~n"),
       ok;
-    {Pid, MsgRef, {add_email, Email}} ->
-      io:format("adding email~n"),
+    {Pid, MsgRef, {add_email, {Email, Region}}} ->
+      io:format("adding email ~p ~p~n", [Email, Region]),
+      ListRegion = binary_to_list(Region),
+      InternalRegion = lists:keyfind(ListRegion, #spot.display_name, ?Surfline_definitions),
+      RegionId = InternalRegion#spot.internal_id,
       Connection = MyDB#db_info.connection,
       Collection = <<"emails">>,
-      mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email}]),
+      mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => RegionId}]),
       Pid ! {MsgRef, ok},
       loop(MyDB);
     {Pid, MsgRef, {remove_email, Email}} ->
@@ -53,9 +57,9 @@ loop(MyDB) ->
 % What happens if we become disconnected?
 % DEAL WITH THAT LATER
 
-add_email(Email) ->
+add_email(Email, Region) ->
   MsgRef = make_ref(),
-  ?MODULE ! {self(), MsgRef, {add_email, Email}},
+  ?MODULE ! {self(), MsgRef, {add_email, {Email, Region}}},
   receive
     {MsgRef, ok} ->
       ok

@@ -16,10 +16,10 @@ start_link() ->
 % handle-cast: for ASYNC
 % Fundamentally get_forecast is for now a synchronous operation
 
-handle_call(check_forecast_good, _From, []) ->
-  Body = get_forecast(),
+handle_call({check_forecast_good, SpotId}, _From, []) ->
+  Body = get_forecast(SpotId),
   ThreeDayForecast = decode_JSON(Body),
-  io:format("ThreeDayForecast ~p~n", [ThreeDayForecast]),
+  io:format("ThreeDayForecast ~p ~p~n", [ThreeDayForecast, SpotId]),
   Response = case ThreeDayForecast of
     "fair" ->
       true;
@@ -42,9 +42,10 @@ test(Pid) ->
 % OK THIS IS COOL AND ALL BUT IT'S NOT AN EXPOSED FUNCTION. (nuke it)
 % get_forecast(Pid) ->
 %   gen_server:call(Pid, get_forecast).
-get_forecast() ->
+get_forecast(SpotId) ->
   inets:start(),
-  Url = "http://api.surfline.com/v1/forecasts/2957?resources=analysis&days=4",
+  SpotId_Str = integer_to_list(SpotId),
+  Url = "http://api.surfline.com/v1/forecasts/" ++ SpotId_Str ++ "?resources=analysis&days=4",
   {ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}} = httpc:request(Url),
   Body.
 
@@ -63,6 +64,6 @@ decode_JSON(Body) ->
 % Right now if the api call fails this thing just keels over and dies
 
 % Client methods (currently broken pending gen_server revamp)
-check_forecast_good(Pid) ->
-  gen_server:call(Pid, check_forecast_good).
+check_forecast_good(Pid, SpotId) ->
+  gen_server:call(Pid, {check_forecast_good, SpotId}).
 

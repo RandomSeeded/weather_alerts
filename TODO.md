@@ -30,8 +30,8 @@ This pending better understanding of setting up proper supervisor / applications
 
 ### Multi-region support
 
-1) Re-enable multiple regions in frontend
-2) Database needs add'l field to be written corresponding to region
+~~1) Re-enable multiple regions in frontend~~
+~~2) Database needs add'l field to be written corresponding to region~~
 3) Expand surfline api to check against every region, not just SF / san mateo
 4) Modify email sending script to use regions
 5) Modify email recipient finder to find based on regions

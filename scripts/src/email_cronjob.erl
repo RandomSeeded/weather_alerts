@@ -1,6 +1,7 @@
 -module(email_cronjob).
 -behavior(gen_server).
 -compile(export_all).
+-include("surfline_definitions.hrl").
 
 % What should this look like?
 % It will call the surfline API (this should be a process)
@@ -21,28 +22,33 @@ send_emails(_) ->
   ok.
 
 init([]) ->
-  {ok, SurflinePid} = surfline_api:start_link(),
-  {ok, SurflinePid}.
+  {ok, []}.
 
 start_link() ->
   gen_server:start_link(?MODULE, [], []).
 
-internal_run(SurflinePid) ->
+internal_run() ->
   io:format("Checking Forecast~n"),
-  Forecast = surfline_api:check_forecast_good(SurflinePid),
-  send_emails(Forecast).
+  lists:foreach(fun(S) ->
+                    SpotId = S#spot.surfline_spotId,
+                    io:format("SpotId ~p~n", [SpotId]),
+                    {ok, SurflinePid} = surfline_api:start_link(),
+                    Forecast = surfline_api:check_forecast_good(SurflinePid, SpotId),
+                    send_emails(Forecast),
+                    exit(SurflinePid, normal)
+                end, ?Surfline_definitions).
 
-internal_run_repeat(SurflinePid, Delay) ->
-  internal_run(SurflinePid),
+internal_run_repeat(Delay) ->
+  internal_run(),
   timer:sleep(Delay * 3600000), % convert to hours
-  internal_run_repeat(SurflinePid, Delay).
+  internal_run_repeat(Delay).
 
-handle_cast(run, SurflinePid) ->
-  internal_run(SurflinePid),
-  {noreply, SurflinePid};
-handle_cast({run_repeat, Delay}, SurflinePid) ->
-  internal_run_repeat(SurflinePid, Delay),
-  {noreply, SurflinePid}.
+handle_cast(run, State) ->
+  internal_run(),
+  {noreply, State};
+handle_cast({run_repeat, Delay}, State) ->
+  internal_run_repeat(Delay),
+  {noreply, State}.
   
 run(Pid) ->
   gen_server:cast(Pid, run).
@@ -50,7 +56,6 @@ run(Pid) ->
 run_repeat(Pid, Delay) ->
   gen_server:cast(Pid, {run_repeat, Delay}).
 
-% TODO: hook something up to this. It's difficult to get gen_server to trigger this call with the current state though.
 code_change(_OldVsn, State, _Extra) ->
   {ok, State}.
 
