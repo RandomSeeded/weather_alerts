@@ -37,9 +37,9 @@ start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
         {'_', [
           {"/", cowboy_static, {priv_file, surf_alert, "index.html"}},
-          {"/api/email-submit", api_handler, []}
-          % {"/api/email-unsubscribe", api_handler, []},
-          % {"/[...]", cowboy_static, {priv_dir, surf_alert, []}}
+          {"/api/email-submit", api_handler, []},
+          {"/api/email-unsubscribe", api_handler, []},
+          {"/[...]", cowboy_static, {priv_dir, surf_alert, []}}
         ]}
     ]),
     {ok, _} = cowboy:start_clear(my_http_listener, 100,
