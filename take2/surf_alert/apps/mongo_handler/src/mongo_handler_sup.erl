@@ -20,6 +20,7 @@
 %%====================================================================
 
 start_link() ->
+    io:format("Mongo handler supervisor start_link~n"),
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %%====================================================================
@@ -28,6 +29,7 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
+    io:format("Mongo handler supervisor init~n"),
     {ok, { {one_for_all, 0, 1}, [
           {mongo_handler, {mongo_handler, start_link, []},
           permanent,
