@@ -28,7 +28,13 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+    {ok, { {one_for_all, 0, 1}, [
+          {mongo_handler, {mongo_handler, start_link, []},
+          permanent,
+          5000,
+          worker,
+          []}
+          ]} }.
 
 %%====================================================================
 %% Internal functions
