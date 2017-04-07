@@ -1,0 +1,6 @@
+-sname surf_alert
+
+-setcookie surf_alert_cookie
+
++K true
++A30
