@@ -4,6 +4,8 @@
 -record(db_info, {collection="emails",
   connection}).
 
+-include_lib("include/surfline_definitions.hrl").
+
 % By our supervisor
 start_link() ->
   gen_server:start_link(?MODULE, [], []).
