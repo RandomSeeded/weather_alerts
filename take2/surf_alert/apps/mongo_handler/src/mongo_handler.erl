@@ -46,3 +46,15 @@ get_emails(Pid) ->
 add_email(Email, Region) ->
   io:format("worker add_email ~n"),
   gen_server:call(?MODULE, add_email).
+% Annoyingly, as this is a named process, we can only have one worker acting as the mongo_handler.
+% We could fix that by either:
+% - having dynamic supervision, and having our API call our supervisor to spin up a new child
+%   - we'd need additional complexity around not spinning up too much; this basically recreates ppool and is a lot of complexity
+%   - (do we really need that additional complexity? Maybe not...we could just terminate/delete when we're done)
+% - using a pool library (poolboy)
+% Upon further investigation: this seems like a case for simple-one-for-one
+% No children are added at the start
+% When we need to perform an operation, the API will call supervisor:start_child(Sup, List)
+% When the call is done, we can do supervisor:terminate_child
+
+
