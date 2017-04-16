@@ -27,8 +27,8 @@ start_link() ->
 % Though it seems kind of weird to have the worker call out to its supervisor...
 add_email(Email, Region) ->
   io:format("Mongo handler supervisor add email ~n"),
+  % Doesnt make sense to grab the below Pid anymore.
   {ok, Pid} = supervisor:start_child(?MODULE, [{add_email, Email, Region}]).
-
 
 %%====================================================================
 %% Supervisor callbacks

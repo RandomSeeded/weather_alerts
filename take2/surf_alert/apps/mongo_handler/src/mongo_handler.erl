@@ -12,10 +12,11 @@ start_link() ->
   io:format("Mongo handler start_link!~n"),
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
-start_link({add_email, Email, Region}) ->
+start_link({add_email, Email, Region}) -> % you NEED to make this start_link more generic
   io:format("Start link Email, Region ~p ~p~n",[Email, Region]),
-  % gen_server:start_link(?MODULE, {add_email, Email, Region}). % this can probably be made more generalized
-  gen_server:start_link(?MODULE, {add_email, Email, Region}, []).
+  gen_server:start_link(?MODULE, {add_email, Email, Region}, []);
+start_link(get_emails) ->
+  gen_server:start_link(?MODULE, get_emails, []).
 
 establish_connection() ->
   application:ensure_all_started(mongodb),
@@ -33,12 +34,26 @@ add_email_internal(DB, Email, Region) ->
   mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => Region}]),
   {ok, DB}.
 
+get_emails(DB) ->
+  io:format("Retrieving emails...~n"),
+  Connection = DB#db_info.connection,
+  Collection = <<"emails">>,
+  {ok, Cursor} = mc_worker_api:find(Connection, Collection, #{}),
+  AllEntries = mc_cursor:rest(Cursor),
+  AllEmails = [maps:get(<<"email">>, Map) || Map <- AllEntries],
+  {ok, AllEmails}.
+
 % By gen server
 init({add_email, Email, Region}) ->
-  io:format("Alternate init ~n"),
   {ok, DB} = establish_connection(),
   add_email_internal(DB, Email, Region),
   ignore;
+% init(get_emails) ->
+%   io:format("mongo handler worker init get emails ~n"),
+%   {ok, DB} = establish_connection(),
+%   {ok, AllEmails} = get_emails(DB),
+%   io:format("AllEmails ~p~n", [AllEmails]),
+%   {ok, AllEmails};
 init(_DBInfo) ->
   io:format("Mongo handler worker init~n"),
   io:format("DBinfo ~p ~n", [_DBInfo]),
@@ -56,6 +71,9 @@ handle_call(get_emails, _From, MyDB) ->
   AllEntries = mc_cursor:rest(Cursor),
   AllEmails = [maps:get(<<"email">>, Map) || Map <- AllEntries],
   {reply, AllEmails, MyDB};
+handle_call(_,_,_) ->
+  io:format("UNEXPECTED ~n"),
+  {reply, [], []}.
 
 handle_info({ack, _Pid, {error, normal}}, State) -> % This is triggered by m_cursor:rest; it represents no more entries in the db
   {noreply, State};
@@ -64,5 +82,8 @@ handle_info(Info, State) ->
   {noreply, State}.
 
 % By other applications etc.
-get_emails(Pid) ->
-  gen_server:call(Pid, get_emails).
+get_emails() ->
+  {ok, Pid} = supervisor:start_child(mongo_handler_sup, [get_emails]),
+  AllEmails = gen_server:call(Pid, get_emails),
+  supervisor:terminate_child(mongo_handler_sup, Pid),
+  AllEmails.
