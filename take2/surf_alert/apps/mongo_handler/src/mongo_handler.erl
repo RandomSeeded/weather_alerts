@@ -40,10 +40,12 @@ get_emails_internal(DB) ->
   AllEmails = [maps:get(<<"email">>, Map) || Map <- AllEntries],
   {reply, AllEmails, DB}.
 
+% Short-lived processes (self-killing)
 init({add_email, Email, Region}) ->
   {ok, DB} = establish_connection(),
   add_email_internal(DB, Email, Region),
   ignore;
+% Longer-lived processes
 init(_DBInfo) ->
   application:ensure_all_started(mongodb),
   Database = <<"surf_alert">>,
@@ -56,6 +58,9 @@ handle_call(get_emails, _From, DB) ->
 
 handle_info({ack, _Pid, {error, normal}}, State) -> % This is triggered by m_cursor:rest; it represents no more entries in the db
   {noreply, State}.
+
+add_email(Email, Region) ->
+  supervisor:start_child(mongo_handler_sup, [{add_email, Email, Region}]).
 
 get_emails() ->
   {ok, Pid} = supervisor:start_child(mongo_handler_sup, [get_emails]),

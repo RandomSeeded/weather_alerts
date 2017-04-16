@@ -8,7 +8,7 @@
 -behaviour(application).
 
 %% Application callbacks
--export([start/2, stop/1, add_email/2]).
+-export([start/2, stop/1]).
 
 %%====================================================================
 %% API
@@ -18,8 +18,8 @@ start(_StartType, _StartArgs) ->
     mongo_handler_sup:start_link().
 
 % Move location of add_email to mongo_handler
-add_email(Email, Region) ->
-    mongo_handler_sup:add_email(Email, Region).
+% add_email(Email, Region) ->
+%     mongo_handler_sup:add_email(Email, Region).
 
 %%--------------------------------------------------------------------
 stop(_State) ->
