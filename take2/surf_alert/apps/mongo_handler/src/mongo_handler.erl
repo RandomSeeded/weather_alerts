@@ -11,10 +11,8 @@
 start_link() ->
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
-start_link({add_email, Email, Region}) -> % you NEED to make this start_link more generic
-  gen_server:start_link(?MODULE, {add_email, Email, Region}, []);
-start_link(get_emails) ->
-  gen_server:start_link(?MODULE, get_emails, []).
+start_link(Args) ->
+  gen_server:start_link(?MODULE, Args, []).
 
 establish_connection() ->
   application:ensure_all_started(mongodb),
@@ -40,10 +38,19 @@ get_emails_internal(DB) ->
   AllEmails = [maps:get(<<"email">>, Map) || Map <- AllEntries],
   {reply, AllEmails, DB}.
 
+remove_email_internal(DB, Email) ->
+  Connection = DB#db_info.connection,
+  Collection = <<"emails">>,
+  mc_worker_api:delete(Connection, Collection, #{<<"email">> => Email}).
+
 % Short-lived processes (self-killing)
 init({add_email, Email, Region}) ->
   {ok, DB} = establish_connection(),
   add_email_internal(DB, Email, Region),
+  ignore;
+init({remove_email, Email}) ->
+  {ok, DB} = establish_connection(),
+  remove_email_internal(DB, Email),
   ignore;
 % Longer-lived processes
 init(_DBInfo) ->
@@ -67,3 +74,6 @@ get_emails() ->
   AllEmails = gen_server:call(Pid, get_emails),
   supervisor:terminate_child(mongo_handler_sup, Pid),
   AllEmails.
+
+remove_email(Email) ->
+  supervisor:start_child(mongo_handler_sup, [{remove_email, Email}]).
