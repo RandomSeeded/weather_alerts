@@ -47,11 +47,11 @@ remove_email_internal(DB, Email) ->
 init({add_email, Email, Region}) ->
   {ok, DB} = establish_connection(),
   add_email_internal(DB, Email, Region),
-  ignore;
+  {stop, normal};
 init({remove_email, Email}) ->
   {ok, DB} = establish_connection(),
   remove_email_internal(DB, Email),
-  ignore;
+  {stop, normal};
 % Longer-lived processes
 init(_DBInfo) ->
   application:ensure_all_started(mongodb),
