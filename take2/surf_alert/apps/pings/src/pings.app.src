@@ -6,7 +6,8 @@
   {applications,
    [kernel,
     stdlib,
-    mongo_handler
+    mongo_handler,
+    erlcron
    ]},
   {env,[]},
   {modules, []},
