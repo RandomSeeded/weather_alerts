@@ -13,7 +13,7 @@ handle(<<"POST">>, <<"/api/email-submit">>, Req0) ->
   {ok, KeyValues, Req} = cowboy_req:read_urlencoded_body(Req0),
   Email = proplists:get_value(<<"email">>, KeyValues),
   Region = proplists:get_value(<<"region">>, KeyValues),
-  mongo_handler_app:add_email(Email, Region),
+  mongo_handler:add_email(Email, Region),
   cowboy_req:reply(200, #{
       <<"content-type">> => <<"text/plain">>
       }, "OK", Req);
