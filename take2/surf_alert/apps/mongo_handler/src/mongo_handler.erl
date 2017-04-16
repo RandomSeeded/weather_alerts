@@ -8,9 +8,6 @@
   connection}).
 
 % By our supervisor
-start_link() ->
-  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
-
 start_link(Args) ->
   gen_server:start_link(?MODULE, Args, []).
 
