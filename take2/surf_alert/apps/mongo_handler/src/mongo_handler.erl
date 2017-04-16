@@ -9,9 +9,12 @@ start_link() ->
   io:format("Mongo handler start_link!~n"),
   gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
+start_link(Email, Region) ->
+  io:format("Email, Region ~p ~p~n",[Email, Region]).
+
 % By gen server
 init(_DBInfo) ->
-  io:format("Mongo handler Init!~n"),
+  io:format("Mongo handler worker init~n"),
   application:ensure_all_started(mongodb),
   Database = <<"surf_alert">>,
   {ok, Connection} = mc_worker_api:connect([{database, Database}]),
@@ -57,4 +60,8 @@ add_email(Email, Region) ->
 % When we need to perform an operation, the API will call supervisor:start_child(Sup, List)
 % When the call is done, we can do supervisor:terminate_child
 
-
+% CLEANUP: handled by the worker returning a tuple starting with stop! SO SIMPLE
+% WHEN YOU REGISTER A SUPERVISOR CHILD: you supply a MFA tuple which represents the function called when you start the child
+% We could just have two 'inits' which had a guard around the MFA tuple
+% And then we reach out to do_xxx methods
+% That ain't that bad
