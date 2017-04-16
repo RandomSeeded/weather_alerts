@@ -1,11 +1,12 @@
 {application, pings,
- [{description, "An OTP application"},
+ [{description, "Ping job for sending alerts"},
   {vsn, "0.1.0"},
   {registered, []},
   {mod, { pings_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    mongo_handler
    ]},
   {env,[]},
   {modules, []},

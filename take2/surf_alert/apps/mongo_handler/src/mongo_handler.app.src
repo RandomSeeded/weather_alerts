@@ -1,5 +1,5 @@
 {application, mongo_handler,
- [{description, "An OTP application"},
+ [{description, "Interactions with Mongo"},
   {vsn, "0.1.0"},
   {registered, []},
   {mod, { mongo_handler_app, []}},
