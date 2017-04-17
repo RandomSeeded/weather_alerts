@@ -28,9 +28,14 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, [
+    {ok, { {rest_for_one, 0, 1}, [
           {pings, {pings, start_link, []},
-          temporary,
+          permanent,
+          5000,
+          worker,
+          []},
+          {surfline_api_sup, {surfline_api_sup, start_link, []},
+          permanent,
           5000,
           worker,
           []}

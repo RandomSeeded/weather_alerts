@@ -20,6 +20,8 @@ internal_run() ->
                     SpotId = S#spot.surfline_spotId,
                     io:format("SpotId ~p~n", [SpotId])
                     % Surfline API should totally be its own thing
+                    % OK SO it needs to have dynamically created processes, ye
+                    % But that sounds like a job for a one-for-one spervisor :wink:
                     % {ok, SurflinePid} = surfline_api:start_link(),
                     % Forecast = surfline_api:check_forecast_good(SurflinePid, SpotId),
                     % send_emails(Forecast),
