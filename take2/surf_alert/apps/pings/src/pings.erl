@@ -27,21 +27,28 @@ init([]) ->
 % 5) Alternately you could spin up new ones as needed with simple_one_for_one...given that it's a fixed amount, I don't see any need for dynamic supervision. Create the sub-process via start_link in init, given the same name. There's no need for any supervision of the sub-processes at all.
 % 6) If the link dies, the process dies, and the supervisor restarts this. We're fine.
 %
-% OPTIONS:
+% OPTIONS (for surfline_api processes)
 % 1) simple_one_for_one, created on-demand
 % 2) created beforehand, named according to spots [permanent]
-% 3) created on-demand manually (the API methods call start_link upon themselves)
-% 4) created on-demand manually with supervisor support (supervisor:start_child) [transient]
+%   - weirdness here is that worker 1 needs to know the name of worker 2 (same name for both)
+% 3) created on-demand manually no supervisor (the API methods call start_link upon themselves)
+% 4) created on-demand manually with supervisor support (the API method calls supervisor:start_child) [transient]
+%
+% CONCURRENCY? How can we make as concurrent as possible?
+% Current approach is:
+% check regions
+% if region meets criteria for quality, issue DB query for recipients
+% send emails to each of the recipients
+%
+% IDEALLY (everything below done per region, simultaneously)
+% 1) check regions and issue db call in parallel
+% 2) when both are done (RPC YIELD BALLLER), filter to correct recipients
+% 3) spawn email process for each recipient and send em out
 internal_run() ->
   io:format("Checking Forecast~n"),
   lists:foreach(fun(S) ->
                     SpotId = S#spot.surfline_spotId,
                     io:format("SpotId ~p~n", [SpotId])
-                    % Surfline API should totally be its own thing
-                    % OK SO it needs to have dynamically created processes, ye
-                    % But that sounds like a job for a one-for-one spervisor :wink:
-                    % How do you want to handle failure cases though? You don't want to crash this job just because one of the sub-jobs failed...ESPECIALLY because this is an API call.
-                    % Unrelated, these should be able to run in parallel. This shit is blocking.
                     % {ok, SurflinePid} = surfline_api:start_link(),
                     % Forecast = surfline_api:check_forecast_good(SurflinePid, SpotId),
                     % send_emails(Forecast),
