@@ -33,11 +33,6 @@ init([]) ->
           permanent,
           5000,
           worker,
-          []},
-          {surfline_api_sup, {surfline_api_sup, start_link, []},
-          permanent,
-          5000,
-          worker,
           []}
           ]
          }}.
