@@ -26,6 +26,12 @@ init([]) ->
 % 4) What about the surfline API? You could do the same thing for those and have a fixed amount?
 % 5) Alternately you could spin up new ones as needed with simple_one_for_one...given that it's a fixed amount, I don't see any need for dynamic supervision. Create the sub-process via start_link in init, given the same name. There's no need for any supervision of the sub-processes at all.
 % 6) If the link dies, the process dies, and the supervisor restarts this. We're fine.
+%
+% OPTIONS:
+% 1) simple_one_for_one, created on-demand
+% 2) created beforehand, named according to spots [permanent]
+% 3) created on-demand manually (the API methods call start_link upon themselves)
+% 4) created on-demand manually with supervisor support (supervisor:start_child) [transient]
 internal_run() ->
   io:format("Checking Forecast~n"),
   lists:foreach(fun(S) ->
