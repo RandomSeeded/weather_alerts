@@ -29,10 +29,16 @@ init([]) ->
 %
 % OPTIONS (for surfline_api processes)
 % 1) simple_one_for_one, created on-demand
+%    - possibly.
+%    - why NOT? s1f1 kinda clunky when you're doing async returns like this
 % 2) created beforehand, named according to spots [permanent]
 %   - weirdness here is that worker 1 needs to know the name of worker 2 (same name for both)
+%   - pro: we dont actually need dynamic supervision...and this fits the bill
+%   - con: what if the process dies and isnt restarted in time? Also they need to be permanent.
 % 3) created on-demand manually no supervisor (the API methods call start_link upon themselves)
-% 4) created on-demand manually with supervisor support (the API method calls supervisor:start_child) [transient]
+%   - no! Bad practice to have workers supervising other workers (even via a link)
+% 4) created on-demand manually with supervisor support (the API method calls supervisor:start_child) [transient, not s1f1?]
+%    - possibly
 %
 % CONCURRENCY? How can we make as concurrent as possible?
 % Current approach is:
