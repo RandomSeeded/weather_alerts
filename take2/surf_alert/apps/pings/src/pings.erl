@@ -4,15 +4,33 @@
 
 -include("include/surfline_definitions.hrl").
 
-start_link() ->
-  gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
+start_link(Name) ->
+  gen_server:start_link({local, Name}, ?MODULE, Name, []).
 
-init([]) ->
-  % Period = {daily, {every, {10, sec}, {between, {1, am}, {11, pm}}}},
+init(Name) ->
+  io:format("init name ~p~n", [Name]),
   Period = {daily, {10, am}},
   Job = {io, format, ["Hi ~n"]},
   erlcron:cron({Period, Job}),
-  {ok, []}.
+  {ok, Name}.
+
+internal_run() ->
+  io:format("Checking Forecast~n"),
+  lists:foreach(fun(S) ->
+                    SpotId = S#spot.surfline_spotId,
+                    io:format("SpotId ~p~n", [SpotId])
+                    % {ok, SurflinePid} = surfline_api:start_link(),
+                    % Forecast = surfline_api:check_forecast_good(SurflinePid, SpotId),
+                    % send_emails(Forecast),
+                    % exit(SurflinePid, normal)
+                end, ?Surfline_definitions).
+
+handle_cast(run, State) ->
+  internal_run(),
+  {noreply, State}.
+
+run() ->
+  gen_server:cast(?MODULE, run).
 
 % OK SO: whats the plan?
 % ISSUES: 
@@ -31,15 +49,27 @@ init([]) ->
 % 1) simple_one_for_one, created on-demand
 %    - possibly.
 %    - why NOT? s1f1 kinda clunky when you're doing async returns like this
+%    - also cleanup sucks (have to terminate children). Does it though? exit(normal) or terminate_child or gen_server:stop or {stop, reason, reply, newstate}
 % 2) created beforehand, named according to spots [permanent]
 %   - weirdness here is that worker 1 needs to know the name of worker 2 (same name for both)
 %   - pro: we dont actually need dynamic supervision...and this fits the bill
 %   - con: what if the process dies and isnt restarted in time? Also they need to be permanent.
+%   - con2: the two processes for the spot (runner and api) cant have same name
+%   - the prefixing thing is super hacky and seems generally frowned upon. Dont do it.
+%   - OK SO: you dont actually need to have the processes be registered / named at all for the surfline API!
 % 3) created on-demand manually no supervisor (the API methods call start_link upon themselves)
 %   - no! Bad practice to have workers supervising other workers (even via a link)
 % 4) created on-demand manually with supervisor support (the API method calls supervisor:start_child) [transient, not s1f1?]
 %    - possibly
+%    - cleanup sucks though this would suck. Not that bad actually you just exit(normal) or do {stop, reason}.
 %
+% FINAL THOUGHTS RE ^
+% Runner processes are named. We start_link them from the supervisor. They are transient. Always up. Never dupes for a single region.
+% We then call out to run_all_the_shit(Name)
+% This then does a gen_server:call/cast(Name)
+% HOWEVER the surfline API processes dont need to be created ahead of time or named. We will just call supervisor:create_child(), when we want one, it will have no name, and then it will call {stop, } at the end.
+% This can be either dynamic supervision s1f1 or dynamic supervision normal. Either is fine.
+
 % CONCURRENCY? How can we make as concurrent as possible?
 % Current approach is:
 % check regions
@@ -50,20 +80,3 @@ init([]) ->
 % 1) check regions and issue db call in parallel
 % 2) when both are done (RPC YIELD BALLLER), filter to correct recipients
 % 3) spawn email process for each recipient and send em out
-internal_run() ->
-  io:format("Checking Forecast~n"),
-  lists:foreach(fun(S) ->
-                    SpotId = S#spot.surfline_spotId,
-                    io:format("SpotId ~p~n", [SpotId])
-                    % {ok, SurflinePid} = surfline_api:start_link(),
-                    % Forecast = surfline_api:check_forecast_good(SurflinePid, SpotId),
-                    % send_emails(Forecast),
-                    % exit(SurflinePid, normal)
-                end, ?Surfline_definitions).
-
-handle_cast(run, State) ->
-  internal_run(),
-  {noreply, State}.
-
-run() ->
-  gen_server:cast(?MODULE, run).

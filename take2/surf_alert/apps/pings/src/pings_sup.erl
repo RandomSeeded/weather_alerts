@@ -28,8 +28,8 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {rest_for_one, 0, 1}, [
-          {pings, {pings, start_link, []},
+    {ok, { {rest_for_one, 0, 1}, [ % check restart strat. Probably just 1f1
+          {pings, {pings, start_link, []}, % this needs to be modified to pass in name again (the map)
           permanent,
           5000,
           worker,
