@@ -13,6 +13,7 @@
 %% Supervisor callbacks
 -export([init/1]).
 
+-include("include/surfline_definitions.hrl").
 -define(SERVER, ?MODULE).
 
 %%====================================================================
@@ -28,15 +29,14 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {rest_for_one, 0, 1}, [ % check restart strat. Probably just 1f1
-          {pings, {pings, start_link, []}, % this needs to be modified to pass in name again (the map)
-          permanent,
-          5000,
-          worker,
-          []}
-          ]
-         }}.
-
+    InternalSpots = [S#spot.internal_id || S <- ?Surfline_definitions],
+    RunnerSpecs = [{Name, {pings, start_link, [Name]},
+        permanent,
+        50000,
+        worker,
+        []} || Name <- InternalSpots],
+    io:format("RunnerSpecs ~p~n", [RunnerSpecs]),
+    {ok, { {rest_for_one, 0, 1}, RunnerSpecs }}.
 %%====================================================================
 %% Internal functions
 %%====================================================================
