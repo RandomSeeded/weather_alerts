@@ -5,9 +5,12 @@
 start_link(Args) ->
   gen_server:start_link(?MODULE, Args, []).
 
-init({check_forecast, SpotId}) ->
+init([]) ->
+  {ok, []}.
+
+handle_call({check_forecast, SpotId}, From, _State) ->
   ThreeDayForecast = get_forecast(SpotId),
-  {stop, normal, ThreeDayForecast, []}.
+  {reply, ThreeDayForecast, _State}.
 
 get_forecast(SpotId) ->
   inets:start(),
@@ -25,4 +28,8 @@ get_forecast(SpotId) ->
 
 check_forecast(SpotId) ->
   io:format("check forecast spotId ~p~n", [SpotId]),
-  supervisor:start_child(surfline_api_sup, [{check_forecast, SpotId}]).
+  {ok, Pid} = supervisor:start_child(surfline_api_sup, [[]]),
+  ThreeDayForecast = gen_server:call(Pid, {check_forecast, SpotId}),
+  supervisor:terminate_child(surfline_api_sup, Pid),
+  ThreeDayForecast. % I feel like this pattern is not ideal...but still not sure whats better
+	
