@@ -24,7 +24,7 @@ start(_StartType, _StartArgs) ->
         ]}
     ]),
     {ok, _} = cowboy:start_clear(my_http_listener, 100,
-        [{port, 8080}],
+        [{port, 1080}],
         #{env => #{dispatch => Dispatch}}
     ),
     surf_alert_sup:start_link().
