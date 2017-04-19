@@ -8,11 +8,11 @@ start_link(Args) ->
 init([]) ->
   {ok, []}.
 
-handle_call({check_forecast, SpotId}, From, _State) ->
-  ThreeDayForecast = get_forecast(SpotId),
-  {reply, ThreeDayForecast, _State}.
+handle_call({get_forecast, SpotId}, _From, State) ->
+  ThreeDayForecast = get_forecast_internal(SpotId),
+  {stop, normal, ThreeDayForecast, State}.
 
-get_forecast(SpotId) ->
+get_forecast_internal(SpotId) ->
   inets:start(),
   SpotId_Str = integer_to_list(SpotId),
   Url = "http://api.surfline.com/v1/forecasts/" ++ SpotId_Str ++ "?resources=analysis&days=4",
@@ -26,10 +26,13 @@ get_forecast(SpotId) ->
   io:format("ThreeDayForecast ~p ~p~n", [ThreeDayForecast, SpotId]),
   ThreeDayForecast.
 
-check_forecast(SpotId) ->
+get_forecast(SpotId) ->
   io:format("check forecast spotId ~p~n", [SpotId]),
   {ok, Pid} = supervisor:start_child(surfline_api_sup, [[]]),
-  ThreeDayForecast = gen_server:call(Pid, {check_forecast, SpotId}),
-  supervisor:terminate_child(surfline_api_sup, Pid),
-  ThreeDayForecast. % I feel like this pattern is not ideal...but still not sure whats better
-	
+  gen_server:call(Pid, {get_forecast, SpotId}).
+
+terminate(Reason, _State) when Reason =:= normal; Reason =:= shutdown ->
+  ok;
+terminate(Reason, _State) ->
+  io:format("Surfline api process terminated for reason ~p ~n", [Reason]).
+
