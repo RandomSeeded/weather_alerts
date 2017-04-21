@@ -24,7 +24,7 @@ internal_send_emails(EmailsForRegion, RegionId, true) ->
   ok.
 
 internal_run(Name) ->
-  % I really need to rename these things...
+  % TODO (nw): rename things to follow surfline_definitions conventions
   #spot{surfline_spotId = SpotId, internal_id = RegionId} = lists:keyfind(Name, #spot.internal_id, ?Surfline_definitions),
   % TODO (nw): yield api & mongo queries to run in parallel
   ForecastForRegion = surfline_api:get_forecast(SpotId),
