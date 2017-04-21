@@ -24,6 +24,7 @@ internal_run(Name) ->
   surfline_api:get_forecast(SpotId),
   EmailsForRegion = mongo_handler:get_emails_for_region(RegionId),
   io:format("EmailsForRegion ~p~n", [EmailsForRegion]),
+  % TODO (nw): need to filter based on whether the forecast is any good
   lists:foreach(fun(Email) ->
                     email:send(Email, RegionId)
                 end, EmailsForRegion),

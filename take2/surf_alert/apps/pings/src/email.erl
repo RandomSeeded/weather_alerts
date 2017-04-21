@@ -14,6 +14,7 @@ init({send, {EmailAddress, InternalRegionId}}) ->
   application:start(public_key),
   application:start(ssl),
   {ok, Password} = file:read_file("/home/nate/Projects/surf_alert/take2/surf_alert/apps/pings/priv/.passwords"),
+  % TODO (nw): need to edit the body of the email to point to the correct regions
   gen_smtp_client:send({"surfalertmailer@gmail.com",
       [EmailAddress], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! http://www.surfline.com/surf-forecasts/northern-california/sf-san-mateo-county_2957", [EmailAddress])},
     [{relay, "smtp.gmail.com"},
