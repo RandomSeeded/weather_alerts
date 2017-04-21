@@ -3,7 +3,7 @@
 %% @end
 %%%-------------------------------------------------------------------
 
--module(pings_sup).
+-module(email_sup).
 
 -behaviour(supervisor).
 
@@ -13,7 +13,6 @@
 %% Supervisor callbacks
 -export([init/1]).
 
--include("include/surfline_definitions.hrl").
 -define(SERVER, ?MODULE).
 
 %%====================================================================
@@ -21,6 +20,7 @@
 %%====================================================================
 
 start_link() ->
+    io:format("email sup start_link ~n"),
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %%====================================================================
@@ -29,23 +29,13 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    InternalSpots = [S#spot.internal_id || S <- ?Surfline_definitions],
-    RunnerSpecs = [{Name, {pings, start_link, [Name]},
-        permanent,
-        50000,
-        worker,
-        []} || Name <- InternalSpots],
-    ApiSupervisor = [{api_supervisor, {surfline_api_sup, start_link, []},
-        permanent,
-        5000,
-        supervisor,
-        []}],
-    EmailSupervisor = [{email_supervisor, {email_sup, start_link, []},
-        permanent,
-        5000,
-        supervisor,
-        []}],
-    {ok, { {one_for_one, 0, 1}, RunnerSpecs ++ ApiSupervisor ++ EmailSupervisor }}.
+    io:format("email sup init ~n"),
+    ChildSpec = {email, {email, start_link, []},
+      temporary,
+      5000,
+      worker,
+      []},
+    {ok, { {simple_one_for_one, 0, 1}, [ChildSpec]}}.
 %%====================================================================
 %% Internal functions
 %%====================================================================

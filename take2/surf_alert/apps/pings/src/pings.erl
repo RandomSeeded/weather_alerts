@@ -22,7 +22,12 @@ internal_run(Name) ->
   % You'll call get_emails with rpc:async_call (same)
   % You'll then yield on both. Frickin kickass
   surfline_api:get_forecast(SpotId),
-  mongo_handler:get_emails_for_region(RegionId).
+  EmailsForRegion = mongo_handler:get_emails_for_region(RegionId),
+  io:format("EmailsForRegion ~p~n", [EmailsForRegion]),
+  lists:foreach(fun(Email) ->
+                    email:send(Email, RegionId)
+                end, EmailsForRegion),
+  ok.
 
 handle_cast(run, Name) ->
   internal_run(Name),
