@@ -5,7 +5,8 @@
   {mod, { mongo_handler_app, []}},
   {applications,
    [kernel,
-    stdlib
+    stdlib,
+    mongodb
    ]},
   {env,[]},
   {modules, []},
