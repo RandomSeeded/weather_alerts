@@ -3,6 +3,20 @@
                surfline_spotId,
                display_name}).
 
+-define(Surfline_qualities,
+        #{"flat" => 1,
+          "very poor" => 2,
+          "poor" => 3,
+          "poor to fair" => 4,
+          "fair" => 5,
+          "fair to good" => 6,
+          "good" => 7,
+          "very good" => 8,
+          "good to epic" => 9,
+          "epic" => 10
+         }
+       ).
+
 -define(Surfline_definitions,
         [#spot{internal_id=humboldt,
                surfline_spotId=2139,
