@@ -13,10 +13,10 @@ init({send, {EmailAddress, InternalRegionId}}) ->
   application:start(asn1),
   application:start(public_key),
   application:start(ssl),
+  #spot{surfline_url = SurflineUrl} = lists:keyfind(InternalRegionId, #spot.internal_id, ?Surfline_definitions),
   {ok, Password} = file:read_file("apps/pings/priv/.passwords"),
-  % TODO (nw): need to edit the body of the email to point to the correct regions
   gen_smtp_client:send({"surfalertmailer@gmail.com",
-      [EmailAddress], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! http://www.surfline.com/surf-forecasts/northern-california/sf-san-mateo-county_2957", [EmailAddress])},
+      [EmailAddress], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! ~p", [EmailAddress, SurflineUrl])},
     [{relay, "smtp.gmail.com"},
       {ssl, true},
       {username, "surfalertmailer@gmail.com"},
