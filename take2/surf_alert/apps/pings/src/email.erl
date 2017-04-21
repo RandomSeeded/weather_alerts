@@ -15,8 +15,9 @@ init({send, {EmailAddress, InternalRegionId}}) ->
   application:start(ssl),
   #spot{surfline_url = SurflineUrl} = lists:keyfind(InternalRegionId, #spot.internal_id, ?Surfline_definitions),
   {ok, Password} = file:read_file("apps/pings/priv/.passwords"),
+  % TODO (nw): add unsubscribe email link here
   gen_smtp_client:send({"surfalertmailer@gmail.com",
-      [EmailAddress], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! ~p", [EmailAddress, SurflineUrl])},
+      [EmailAddress], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! ~n~n~s", [EmailAddress, SurflineUrl])},
     [{relay, "smtp.gmail.com"},
       {ssl, true},
       {username, "surfalertmailer@gmail.com"},
