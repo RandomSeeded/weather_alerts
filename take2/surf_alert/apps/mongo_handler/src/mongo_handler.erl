@@ -24,16 +24,20 @@ add_email_internal(DB, Email, Region) ->
   RegionId = InternalRegion#spot.internal_id,
   Connection = DB#db_info.connection,
   Collection = <<"emails">>,
-  mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => Region}]),
+  mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => RegionId}]),
   {ok, DB}.
 
-get_emails_internal(DB) ->
+get_emails_internal(RegionId, DB) ->
   Connection = DB#db_info.connection,
   Collection = <<"emails">>,
-  {ok, Cursor} = mc_worker_api:find(Connection, Collection, #{}),
-  AllEntries = mc_cursor:rest(Cursor),
-  AllEmails = [maps:get(<<"email">>, Map) || Map <- AllEntries],
-  {reply, AllEmails, DB}.
+  BinaryRegionId = erlang:atom_to_binary(RegionId, 'latin1'),
+  AllEntries = case mc_worker_api:find(Connection, Collection, #{<<"region">> => BinaryRegionId}) of
+                 {ok, Cursor} ->
+                   mc_cursor:rest(Cursor);
+                 [] ->
+                   []
+               end,
+  [maps:get(<<"email">>, Map) || Map <- AllEntries].
 
 remove_email_internal(DB, Email) ->
   Connection = DB#db_info.connection,
@@ -49,6 +53,7 @@ init({remove_email, Email}) ->
   {ok, DB} = establish_connection(),
   remove_email_internal(DB, Email),
   {stop, normal};
+
 % Longer-lived processes
 init(_DBInfo) ->
   application:ensure_all_started(mongodb),
@@ -57,8 +62,10 @@ init(_DBInfo) ->
   DB = #db_info{connection=Connection},
   {ok, DB}.
 
-handle_call(get_emails, _From, DB) ->
-  get_emails_internal(DB).
+handle_call({get_emails, RegionId}, _From, DB) ->
+  EmailsForRegion = get_emails_internal(RegionId, DB),
+  {stop, normal, EmailsForRegion, DB}.
+
 
 handle_info({ack, _Pid, {error, normal}}, State) -> % This is triggered by m_cursor:rest; it represents no more entries in the db
   {noreply, State}.
@@ -66,11 +73,12 @@ handle_info({ack, _Pid, {error, normal}}, State) -> % This is triggered by m_cur
 add_email(Email, Region) ->
   supervisor:start_child(mongo_handler_sup, [{add_email, Email, Region}]).
 
-get_emails() ->
-  {ok, Pid} = supervisor:start_child(mongo_handler_sup, [get_emails]),
-  AllEmails = gen_server:call(Pid, get_emails),
-  supervisor:terminate_child(mongo_handler_sup, Pid),
-  AllEmails.
+get_emails_for_region(RegionId) ->
+  {ok, Pid} = supervisor:start_child(mongo_handler_sup, [{get_emails, RegionId}]),
+  gen_server:call(Pid, {get_emails, RegionId}).
 
 remove_email(Email) ->
   supervisor:start_child(mongo_handler_sup, [{remove_email, Email}]).
+
+terminate(normal, _State) ->
+  ok.
