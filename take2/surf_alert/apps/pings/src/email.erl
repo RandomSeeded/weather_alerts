@@ -7,8 +7,11 @@
 start_link(Args) ->
   gen_server:start_link(?MODULE, Args, []).
 
-init({send, {EmailAddress, InternalRegionId}}) ->
-  io:format("Sending Email to ~p ~p~n", [EmailAddress, InternalRegionId]),
+init({send, {Email, InternalRegionId}}) ->
+  EmailId = maps:get(<<"_id">>, Email),
+  Address = maps:get(<<"email">>, Email),
+
+  io:format("Sending Email to ~p ~p~n", [Address, InternalRegionId]),
   application:start(crypto),
   application:start(asn1),
   application:start(public_key),
@@ -17,13 +20,13 @@ init({send, {EmailAddress, InternalRegionId}}) ->
   {ok, Password} = file:read_file("apps/pings/priv/.passwords"),
   % TODO (nw): add unsubscribe email link here
   gen_smtp_client:send({"surfalertmailer@gmail.com",
-      [EmailAddress], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! ~n~n~s", [EmailAddress, SurflineUrl])},
+      [Address], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! ~n~n~s", [Address, SurflineUrl])},
     [{relay, "smtp.gmail.com"},
       {ssl, true},
       {username, "surfalertmailer@gmail.com"},
       {password, erlang:binary_to_list(Password)}]),
   {stop, normal}.
 
-send(EmailAddress, InternalRegionId) ->
-  supervisor:start_child(email_sup, [{send, {EmailAddress, InternalRegionId}}]),
+send(Email, InternalRegionId) ->
+  supervisor:start_child(email_sup, [{send, {Email, InternalRegionId}}]),
   ok.

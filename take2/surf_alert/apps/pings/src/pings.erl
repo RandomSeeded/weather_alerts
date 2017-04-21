@@ -2,7 +2,7 @@
 -compile(export_all).
 -behavior(gen_server).
 
--define(ForecastThreshold, 5).
+-define(ForecastThreshold, 0).
 -include("include/surfline_definitions.hrl").
 
 start_link(Name) ->
@@ -18,6 +18,7 @@ init(Name) ->
 internal_send_emails(EmailsForRegion, RegionId, false) ->
   ok;
 internal_send_emails(EmailsForRegion, RegionId, true) ->
+  io:format("EmailsForRegion ~p~n", [EmailsForRegion]),
   lists:foreach(fun(Email) ->
                     email:send(Email, RegionId)
                 end, EmailsForRegion),

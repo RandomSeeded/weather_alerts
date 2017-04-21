@@ -24,7 +24,8 @@ add_email_internal(DB, Email, Region) ->
   RegionId = InternalRegion#spot.internal_id,
   Connection = DB#db_info.connection,
   Collection = <<"emails">>,
-  mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => RegionId}]),
+  Uuid = erlang:list_to_binary(uuid:to_string(uuid:v4())),
+  mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => RegionId, <<"_id">> => Uuid}]),
   {ok, DB}.
 
 get_emails_internal(RegionId, DB) ->
@@ -37,7 +38,7 @@ get_emails_internal(RegionId, DB) ->
                  [] ->
                    []
                end,
-  [maps:get(<<"email">>, Map) || Map <- AllEntries].
+  AllEntries.
 
 remove_email_internal(DB, Email) ->
   Connection = DB#db_info.connection,
