@@ -75,8 +75,8 @@ handle_call({get_emails, RegionId}, _From, DB) ->
   EmailsForRegion = get_emails_internal(RegionId, DB),
   {stop, normal, EmailsForRegion, DB}.
 
-
-handle_info({ack, _Pid, {error, normal}}, State) -> % This is triggered by m_cursor:rest; it represents no more entries in the db
+% This is triggered by m_cursor:rest; it represents no more entries in the db
+handle_info({ack, _Pid, {error, normal}}, State) ->
   {noreply, State}.
 
 add_email(Email, Region) ->

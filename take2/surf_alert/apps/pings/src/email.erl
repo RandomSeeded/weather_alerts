@@ -11,6 +11,7 @@ start_link(Args) ->
 init({send, {Email, InternalRegionId}}) ->
   EmailId = maps:get(<<"_id">>, Email),
   Address = maps:get(<<"email">>, Email),
+  io:format("Sending email to ~s~n",[Address]),
   CanonicalHostUrl = maps:get(canonical_host_url, ?Config),
   UnsubscribeRegionLink = io_lib:format("~s/api/unsubscribe?alert=~s", [CanonicalHostUrl, EmailId]),
   UnsubscribeAllLink = io_lib:format("~s/api/unsubscribe?email=~s", [CanonicalHostUrl, Address]),

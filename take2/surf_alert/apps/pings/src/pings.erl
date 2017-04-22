@@ -2,7 +2,7 @@
 -compile(export_all).
 -behavior(gen_server).
 
--define(ForecastThreshold, 0).
+-include("include/config.hrl").
 -include("include/surfline_definitions.hrl").
 
 start_link(Name) ->
@@ -18,7 +18,6 @@ init(Name) ->
 internal_send_emails(EmailsForRegion, RegionId, false) ->
   ok;
 internal_send_emails(EmailsForRegion, RegionId, true) ->
-  io:format("EmailsForRegion ~p~n", [EmailsForRegion]),
   lists:foreach(fun(Email) ->
                     email:send(Email, RegionId)
                 end, EmailsForRegion),
@@ -30,10 +29,11 @@ internal_run(Name) ->
   % TODO (nw): yield api & mongo queries to run in parallel
   ForecastForRegion = surfline_api:get_forecast(SpotId),
   EmailsForRegion = mongo_handler:get_emails_for_region(RegionId),
-  io:format("ForecastForRegion ~p~n", [ForecastForRegion]),
   #{ForecastForRegion := NumericForecast} = ?Surfline_qualities,
   % TODO (nw): allow users to set their own thresholds
-  ShouldSendEmail = NumericForecast >= ?ForecastThreshold,
+  ForecastThreshold = maps:get(forecast_threshold, ?Config),
+  io:format("ForecastThreshold ~p~n", [ForecastThreshold]),
+  ShouldSendEmail = NumericForecast >= ForecastThreshold,
   internal_send_emails(EmailsForRegion, RegionId, ShouldSendEmail).
 
 handle_cast(run, Name) ->

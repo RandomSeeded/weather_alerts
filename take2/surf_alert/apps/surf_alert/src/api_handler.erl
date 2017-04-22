@@ -9,9 +9,9 @@ init(Req0, State) ->
   Req = handle(Method, Path, Req0),
   {ok, Req, State}.
 
-internal_unsubscribe(AlertId, _Email) when AlertId =/= [] ->
+unsubscribe_internal(AlertId, _Email) when AlertId =/= [] ->
   mongo_handler:remove_alert(AlertId);
-internal_unsubscribe(_AlertId, Email) when Email =/= [] ->
+unsubscribe_internal(_AlertId, Email) when Email =/= [] ->
   mongo_handler:remove_email(Email).
 
 handle(<<"POST">>, <<"/api/email-submit">>, Req0) ->
@@ -31,10 +31,7 @@ handle(<<"POST">>, <<"/api/email-unsubscribe">>, Req0) ->
       }, "OK", Req);
 handle(<<"GET">>, <<"/api/unsubscribe">>, Req) ->
   #{alert := AlertId, email := Email} = cowboy_req:match_qs([{alert, [], ""}, {email, [], ""}], Req),
-  internal_unsubscribe(AlertId, Email),
-  % io:format("AlertId ~p~n", [AlertId]),
-  % io:format("Email ~p~n", [Email]),
-  % mongo_handler:remove_alert(AlertId),
+  unsubscribe_internal(AlertId, Email),
   cowboy_req:reply(200, #{
       <<"content-type">> => <<"text/plain">>
       }, "OK", Req);
