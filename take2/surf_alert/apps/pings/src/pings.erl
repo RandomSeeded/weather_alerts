@@ -28,10 +28,10 @@ internal_run(Name) ->
   % TODO (nw): yield api & mongo queries to run in parallel
   ForecastForRegion = surfline_api:get_forecast(SpotId),
   EmailsForRegion = mongo_handler:get_emails_for_region(RegionId),
+  io:format("ForecastForRegion ~p ~p~n", [RegionId, ForecastForRegion]),
   #{ForecastForRegion := NumericForecast} = ?Surfline_qualities,
   % TODO (nw): allow users to set their own thresholds
   ForecastThreshold = maps:get(forecast_threshold, ?Config),
-  io:format("ForecastThreshold ~p~n", [ForecastThreshold]),
   ShouldSendEmail = NumericForecast >= ForecastThreshold,
   internal_send_emails(EmailsForRegion, RegionId, ShouldSendEmail).
 

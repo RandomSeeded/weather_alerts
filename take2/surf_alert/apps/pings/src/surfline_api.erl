@@ -22,9 +22,7 @@ get_forecast_internal(SpotId) ->
   % This needs to actually look it up (lists:keyfind)
   {"Analysis", {struct, Analysis}} = lists:nth(5, JSONData),
   {"generalCondition", {array, RegionalForecasts}} = lists:nth(9, Analysis),
-  ThreeDayForecast = lists:nth(4, RegionalForecasts), % Get the forecast for three days out
-  io:format("ThreeDayForecast ~p ~p~n", [ThreeDayForecast, SpotId]),
-  ThreeDayForecast.
+  lists:nth(4, RegionalForecasts). % Get the forecast for three days out
 
 get_forecast(SpotId) ->
   io:format("check forecast spotId ~p~n", [SpotId]),
