@@ -11,13 +11,13 @@ start_link(Args) ->
 init({send, {Email, InternalRegionId}}) ->
   EmailId = maps:get(<<"_id">>, Email),
   Address = maps:get(<<"email">>, Email),
-  io:format("Sending email to ~s~n",[Address]),
   CanonicalHostUrl = maps:get(canonical_host_url, ?Config),
   UnsubscribeRegionLink = io_lib:format("~s/api/unsubscribe?alert=~s", [CanonicalHostUrl, EmailId]),
   UnsubscribeAllLink = io_lib:format("~s/api/unsubscribe?email=~s", [CanonicalHostUrl, Address]),
   #spot{surfline_url = SurflineUrl} = lists:keyfind(InternalRegionId, #spot.internal_id, ?Surfline_definitions),
 
   % TODO (nw): figure out how to HTML the email body / unsub links
+  io:format("Sending email to ~s~n",[Address]),
   EmailBody = io_lib:format("Surf incoming! ~n~n~s~n~nTo unsubscribe from this alert: ~s~nTo unsubscribe from all alerts: ~s", [SurflineUrl, UnsubscribeRegionLink, UnsubscribeAllLink]),
 
   application:start(crypto),

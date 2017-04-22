@@ -1,11 +1,10 @@
--define(Config, #{
-          canonical_host_url => case os:getenv("CANONICAL_HOST_URL") of
-                                  false -> "http://localhost:1080";
-                                  E -> E
-                                end,
-          forecast_threshold => case os:getenv("FORECAST_THRESHOLD") of
-                                  false -> 5;
-                                  E -> erlang:list_to_integer(E)
-                                end
-         }).
-
+-define(Config, case os:getenv("ENVIRONMENT") of
+                  false ->
+                    #{canonical_host_url => "http://natewillard.com/projects/surf_alert",
+                      forecast_threshold => 5,
+                      cron_period => {daily, {10, am}}};
+                  "DEV" ->
+                    #{canonical_host_url => "http://localhost:1080",
+                      forecast_threshold => 0,
+                      cron_period => {once, 1}}
+                end).

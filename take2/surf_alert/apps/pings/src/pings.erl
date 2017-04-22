@@ -9,8 +9,7 @@ start_link(Name) ->
   gen_server:start_link({local, Name}, ?MODULE, Name, []).
 
 init(Name) ->
-  % Period = {daily, {10, am}},
-  Period = {once, 1},
+  Period = maps:get(cron_period, ?Config),
   Job = {?MODULE, run, [Name]},
   erlcron:cron({Period, Job}),
   {ok, Name}.
