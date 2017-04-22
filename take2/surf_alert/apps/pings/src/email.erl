@@ -2,6 +2,7 @@
 -behavior(gen_server).
 -compile(export_all).
 
+-include("include/config.hrl").
 -include("include/surfline_definitions.hrl").
 
 start_link(Args) ->
@@ -10,17 +11,21 @@ start_link(Args) ->
 init({send, {Email, InternalRegionId}}) ->
   EmailId = maps:get(<<"_id">>, Email),
   Address = maps:get(<<"email">>, Email),
+  CanonicalHostUrl = maps:get(canonical_host_url, ?Config),
+  UnsubscribeRegionLink = io_lib:format("~s/api/unsubsribe/region/~s", [CanonicalHostUrl, EmailId]),
+  UnsubscribeAllLink = io_lib:format("~s/api/unsubscribe/email/~s", [CanonicalHostUrl, Address]),
+  #spot{surfline_url = SurflineUrl} = lists:keyfind(InternalRegionId, #spot.internal_id, ?Surfline_definitions),
 
-  io:format("Sending Email to ~p ~p~n", [Address, InternalRegionId]),
+  % TODO (nw): figure out how to HTML the email body / unsub links
+  EmailBody = io_lib:format("Surf incoming! ~n~n~s~n~nTo unsubscribe from this alert: ~s~nTo unsubscribe from all alerts: ~s", [SurflineUrl, UnsubscribeRegionLink, UnsubscribeAllLink]),
+
   application:start(crypto),
   application:start(asn1),
   application:start(public_key),
   application:start(ssl),
-  #spot{surfline_url = SurflineUrl} = lists:keyfind(InternalRegionId, #spot.internal_id, ?Surfline_definitions),
   {ok, Password} = file:read_file("apps/pings/priv/.passwords"),
-  % TODO (nw): add unsubscribe email link here
   gen_smtp_client:send({"surfalertmailer@gmail.com",
-      [Address], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\nsurf incoming! ~n~n~s", [Address, SurflineUrl])},
+      [Address], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\n~s", [Address, EmailBody])},
     [{relay, "smtp.gmail.com"},
       {ssl, true},
       {username, "surfalertmailer@gmail.com"},
