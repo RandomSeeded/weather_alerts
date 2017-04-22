@@ -44,6 +44,10 @@ remove_email_internal(DB, Email) ->
   Connection = DB#db_info.connection,
   Collection = <<"emails">>,
   mc_worker_api:delete(Connection, Collection, #{<<"email">> => Email}).
+remove_alert_internal(DB, AlertId) ->
+  Connection = DB#db_info.connection,
+  Collection = <<"emails">>,
+  mc_worker_api:delete(Connection, Collection, #{<<"_id">> => AlertId}).
 
 % Short-lived processes (self-killing)
 init({add_email, Email, Region}) ->
@@ -53,6 +57,10 @@ init({add_email, Email, Region}) ->
 init({remove_email, Email}) ->
   {ok, DB} = establish_connection(),
   remove_email_internal(DB, Email),
+  {stop, normal};
+init({remove_alert, AlertId}) ->
+  {ok, DB} = establish_connection(),
+  remove_alert_internal(DB, AlertId),
   {stop, normal};
 
 % Longer-lived processes
@@ -80,6 +88,8 @@ get_emails_for_region(RegionId) ->
 
 remove_email(Email) ->
   supervisor:start_child(mongo_handler_sup, [{remove_email, Email}]).
+remove_alert(AlertId) ->
+  supervisor:start_child(mongo_handler_sup, [{remove_alert, AlertId}]).
 
 terminate(normal, _State) ->
   ok.

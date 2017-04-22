@@ -12,8 +12,8 @@ init({send, {Email, InternalRegionId}}) ->
   EmailId = maps:get(<<"_id">>, Email),
   Address = maps:get(<<"email">>, Email),
   CanonicalHostUrl = maps:get(canonical_host_url, ?Config),
-  UnsubscribeRegionLink = io_lib:format("~s/api/unsubsribe/region/~s", [CanonicalHostUrl, EmailId]),
-  UnsubscribeAllLink = io_lib:format("~s/api/unsubscribe/email/~s", [CanonicalHostUrl, Address]),
+  UnsubscribeRegionLink = io_lib:format("~s/api/unsubscribe?alert=~s", [CanonicalHostUrl, EmailId]),
+  UnsubscribeAllLink = io_lib:format("~s/api/unsubscribe?email=~s", [CanonicalHostUrl, Address]),
   #spot{surfline_url = SurflineUrl} = lists:keyfind(InternalRegionId, #spot.internal_id, ?Surfline_definitions),
 
   % TODO (nw): figure out how to HTML the email body / unsub links
@@ -25,7 +25,7 @@ init({send, {Email, InternalRegionId}}) ->
   application:start(ssl),
   {ok, Password} = file:read_file("apps/pings/priv/.passwords"),
   gen_smtp_client:send({"surfalertmailer@gmail.com",
-      [Address], io_lib:format("subject: surf alert\r\nfrom: surf alert daemon\r\nto: ~p\r\n\r\n~s", [Address, EmailBody])},
+      [Address], io_lib:format("subject: surf alert\r\nfrom: Surf Alert Daemon\r\nto: ~p\r\n\r\n~s", [Address, EmailBody])},
     [{relay, "smtp.gmail.com"},
       {ssl, true},
       {username, "surfalertmailer@gmail.com"},

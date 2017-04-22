@@ -19,7 +19,7 @@ start(_StartType, _StartArgs) ->
         {'_', [
           {"/", cowboy_static, {priv_file, surf_alert, "index.html"}},
           {"/api/email-submit", api_handler, []},
-          {"/api/email-unsubscribe", api_handler, []},
+          {"/api/unsubscribe", api_handler, []},
           {"/[...]", cowboy_static, {priv_dir, surf_alert, []}}
         ]}
     ]),
