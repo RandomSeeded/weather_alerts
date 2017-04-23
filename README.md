@@ -8,7 +8,7 @@ Get notified ahead of time when the swell is coming in.
 
 ## TODOS NECESSARY FOR RELEASE
 
-1. All regions
+1. ~~All regions~~
 2. ~~Search bar for regions~~
 3. Alert-level date range (alert me within X days)
 4. Alert-level quality thresholds (forecast is at least X good)
