@@ -22,13 +22,6 @@ handle(<<"POST">>, <<"/api/email-submit">>, Req0) ->
   cowboy_req:reply(200, #{
       <<"content-type">> => <<"text/plain">>
       }, "OK", Req);
-handle(<<"POST">>, <<"/api/email-unsubscribe">>, Req0) ->
-  {ok, KeyValues, Req} = cowboy_req:read_urlencoded_body(Req0),
-  Email = proplists:get_value(<<"email">>, KeyValues),
-  mongo_handler:remove_email(Email),
-  cowboy_req:reply(200, #{
-      <<"content-type">> => <<"text/plain">>
-      }, "OK", Req);
 handle(<<"GET">>, <<"/api/unsubscribe">>, Req) ->
   #{alert := AlertId, email := Email} = cowboy_req:match_qs([{alert, [], ""}, {email, [], ""}], Req),
   unsubscribe_internal(AlertId, Email),
