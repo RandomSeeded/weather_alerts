@@ -20,5 +20,6 @@ Get notified ahead of time when the swell is coming in.
 2. Move sender email address into config file (blocks open source usage)
 3. Write mini usage guide (readme)
 4. Code-level todos
+5. Hot code reloading!
 
 
