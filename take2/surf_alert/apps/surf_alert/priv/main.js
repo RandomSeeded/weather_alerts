@@ -8,7 +8,7 @@ $(function() {
       body[elem.name] = elem.value;
     }
 
-    $.post('http://localhost:1080/api/email-submit', body, function(res) {
+    $.post('http://localhost:1080/api/subscribe', body, function(res) {
       $('#subscribe-success').fadeIn();
       setTimeout(function() {
         $('#subscribe-success').fadeOut();

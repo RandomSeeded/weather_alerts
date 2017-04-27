@@ -14,7 +14,7 @@ unsubscribe_internal(AlertId, _Email) when AlertId =/= [] ->
 unsubscribe_internal(_AlertId, Email) when Email =/= [] ->
   mongo_handler:remove_email(Email).
 
-handle(<<"POST">>, <<"/api/email-submit">>, Req0) ->
+handle(<<"POST">>, <<"/api/subscribe">>, Req0) ->
   {ok, KeyValues, Req} = cowboy_req:read_urlencoded_body(Req0),
   Email = proplists:get_value(<<"email">>, KeyValues),
   Region = proplists:get_value(<<"region">>, KeyValues),
