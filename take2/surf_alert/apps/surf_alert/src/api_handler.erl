@@ -20,7 +20,7 @@ handle(<<"POST">>, <<"/api/subscribe">>, Req0) ->
   Email = proplists:get_value(<<"email">>, KeyValues),
   Region = proplists:get_value(<<"region">>, KeyValues),
   Threshold = proplists:get_value(<<"threshold">>, KeyValues),
-  WithinPeriod = proplists:get_value(<<"within-period">>, KeyValues),
+  WithinPeriod = erlang:binary_to_integer(proplists:get_value(<<"withinPeriod">>, KeyValues)),
 
   % TODO (nw): rename to add_alert
   mongo_handler:add_email(Email, Region, Threshold, WithinPeriod),

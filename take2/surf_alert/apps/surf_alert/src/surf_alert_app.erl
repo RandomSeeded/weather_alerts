@@ -18,7 +18,8 @@ start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
         {'_', [
           {"/", cowboy_static, {priv_file, surf_alert, "index.html"}},
-          {"/api/email-submit", api_handler, []},
+          % TODO (nw): collapse api routes into one
+          {"/api/subscribe", api_handler, []},
           {"/api/unsubscribe", api_handler, []},
           {"/[...]", cowboy_static, {priv_dir, surf_alert, []}}
         ]}

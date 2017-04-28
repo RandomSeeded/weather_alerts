@@ -18,14 +18,14 @@ establish_connection() ->
   DB = #db_info{connection=Connection},
   {ok, DB}.
 
-add_email_internal(DB, Email, Region, _Threshold, _WithinPeriod) ->
+add_email_internal(DB, Email, Region, _Threshold, WithinPeriod) ->
   ListRegion = binary_to_list(Region),
   InternalRegion = lists:keyfind(ListRegion, #spot.display_name, ?Surfline_definitions),
   RegionId = InternalRegion#spot.internal_id,
   Connection = DB#db_info.connection,
   Collection = <<"emails">>,
   Uuid = erlang:list_to_binary(uuid:to_string(uuid:v4())),
-  mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => RegionId, <<"_id">> => Uuid}]),
+  mc_worker_api:insert(Connection, Collection, [#{<<"email">> => Email, <<"region">> => RegionId, <<"_id">> => Uuid, <<"withinPeriod">> => WithinPeriod}]),
   {ok, DB}.
 
 get_emails_internal(RegionId, DB) ->
