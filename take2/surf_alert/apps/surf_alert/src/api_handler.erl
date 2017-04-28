@@ -16,9 +16,14 @@ unsubscribe_internal(_AlertId, Email) when Email =/= [] ->
 
 handle(<<"POST">>, <<"/api/subscribe">>, Req0) ->
   {ok, KeyValues, Req} = cowboy_req:read_urlencoded_body(Req0),
+  % TODO (nw): better way to do the following?
   Email = proplists:get_value(<<"email">>, KeyValues),
   Region = proplists:get_value(<<"region">>, KeyValues),
-  mongo_handler:add_email(Email, Region),
+  Threshold = proplists:get_value(<<"threshold">>, KeyValues),
+  WithinPeriod = proplists:get_value(<<"within-period">>, KeyValues),
+
+  % TODO (nw): rename to add_alert
+  mongo_handler:add_email(Email, Region, Threshold, WithinPeriod),
   cowboy_req:reply(200, #{
       <<"content-type">> => <<"text/plain">>
       }, "OK", Req);

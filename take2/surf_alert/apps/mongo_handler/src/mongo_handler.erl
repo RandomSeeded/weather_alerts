@@ -18,7 +18,7 @@ establish_connection() ->
   DB = #db_info{connection=Connection},
   {ok, DB}.
 
-add_email_internal(DB, Email, Region) ->
+add_email_internal(DB, Email, Region, _Threshold, _WithinPeriod) ->
   ListRegion = binary_to_list(Region),
   InternalRegion = lists:keyfind(ListRegion, #spot.display_name, ?Surfline_definitions),
   RegionId = InternalRegion#spot.internal_id,
@@ -50,9 +50,9 @@ remove_alert_internal(DB, AlertId) ->
   mc_worker_api:delete(Connection, Collection, #{<<"_id">> => AlertId}).
 
 % Short-lived processes (self-killing)
-init({add_email, Email, Region}) ->
+init({add_email, Email, Region, Threshold, WithinPeriod}) ->
   {ok, DB} = establish_connection(),
-  add_email_internal(DB, Email, Region),
+  add_email_internal(DB, Email, Region, Threshold, WithinPeriod),
   {stop, normal};
 init({remove_email, Email}) ->
   {ok, DB} = establish_connection(),
@@ -79,8 +79,8 @@ handle_call({get_emails, RegionId}, _From, DB) ->
 handle_info({ack, _Pid, {error, normal}}, State) ->
   {noreply, State}.
 
-add_email(Email, Region) ->
-  supervisor:start_child(mongo_handler_sup, [{add_email, Email, Region}]).
+add_email(Email, Region, Threshold, WithinPeriod) ->
+  supervisor:start_child(mongo_handler_sup, [{add_email, Email, Region, Threshold, WithinPeriod}]).
 
 get_emails_for_region(RegionId) ->
   {ok, Pid} = supervisor:start_child(mongo_handler_sup, [{get_emails, RegionId}]),

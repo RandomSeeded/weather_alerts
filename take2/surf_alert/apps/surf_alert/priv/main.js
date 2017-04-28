@@ -8,6 +8,10 @@ $(function() {
       body[elem.name] = elem.value;
     }
 
+    // TODO (nw): remove this once added to the html
+    body.threshold = "fair";
+    body['within-period'] = '4';
+
     $.post('http://localhost:1080/api/subscribe', body, function(res) {
       $('#subscribe-success').fadeIn();
       setTimeout(function() {
