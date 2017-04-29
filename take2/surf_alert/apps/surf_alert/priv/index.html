@@ -18,8 +18,16 @@
       <div>
         <form class="form-inline" id="subscription-form">
           <div>
-            <!-- TODO (nw): add in threshold and within period options -->
-            <select name="region" class="selectpicker" data-live-search="true">
+            <span>Alert me at </span>
+          </div>
+          <div>
+            <input type="text" name="email" placeholder="Email" class="form-control">
+          </div>
+          <div>
+            <span>When </span>
+          </div>
+          <div>
+            <select name="region" class="selectpicker" data-live-search="true" title="Region">
               <option>Oregon</option>
               <option>Humboldt County</option>
               <option>Marin County</option>
@@ -70,7 +78,39 @@
               <option>Southern Mexico - Puerto Escondido</option>
               <option>Southern Mexico - Huatulco Area</option>
             </select>
-            <input type="text" name="email" placeholder="Email" class="form-control">
+          </div>
+          <div>
+            <span>forecast is at least </span>
+          </div>
+          <div>
+            <select name="threshold" class="selectpicker" data-live-search="true" title="This Good">
+              <option>flat</option>
+              <option>very poor</option>
+              <option>poor</option>
+              <option>poor to fair</option>
+              <option>fair</option>
+              <option>fair to good</option>
+              <option>good</option>
+              <option>very good</option>
+              <option>good to epic</option>
+              <option>epic</option>
+            </select>
+          </div>
+          <div>
+            <span>within the next </span>
+          </div>
+          <div>
+            <select name="withinPeriod" class="selectpicker" data-live-search="true" title="This Many Days">
+              <option>1 day</option>
+              <option>2 days</option>
+              <option>3 days</option>
+              <option>4 days</option>
+              <option>5 days</option>
+              <option>6 days</option>
+              <option>7 days</option>
+            </select>
+          </div>
+          <div>
             <button class="btn btn-default">Subscribe</button>
           </div>
           <div class="row">

@@ -15,7 +15,7 @@ handle_call({get_forecast, SpotId}, _From, State) ->
 get_forecast_internal(SpotId) ->
   inets:start(),
   SpotId_Str = integer_to_list(SpotId),
-  Url = "http://api.surfline.com/v1/forecasts/" ++ SpotId_Str ++ "?resources=analysis&days=4",
+  Url = "http://api.surfline.com/v1/forecasts/" ++ SpotId_Str ++ "?resources=analysis&days=7",
   {ok, {{_Version, 200, _ReasonPhrase}, _Headers, Body}} = httpc:request(Url),
   Struct = mochijson:decode(Body),
   {struct, JSONData} = Struct,
