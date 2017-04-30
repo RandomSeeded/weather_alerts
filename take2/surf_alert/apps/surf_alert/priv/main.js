@@ -9,7 +9,7 @@ $(function() {
     }
     body.withinPeriod = body.withinPeriod.replace(/days|day/, '').trim();
 
-    $.post('http://localhost:1080/api/subscribe', body, function(res) {
+    $.post('/api/subscribe', body, function(res) {
       $('#subscribe-success').fadeIn();
       setTimeout(function() {
         $('#subscribe-success').fadeOut();
