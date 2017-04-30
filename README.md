@@ -4,7 +4,7 @@ Get notified ahead of time when the swell is coming in.
 
 # In production
 
-[Here](http://natewillard.com/projects/surf_alert/)
+[Here](http://www.surfpings.com)
 
 ## TODOS NECESSARY FOR RELEASE
 
