@@ -4,7 +4,8 @@
                display_name}).
 
 -define(Surfline_qualities,
-        #{"flat" => 1,
+        #{"" => -1,
+          "flat" => 1,
           "very poor" => 2,
           "poor" => 3,
           "poor to fair" => 4,
