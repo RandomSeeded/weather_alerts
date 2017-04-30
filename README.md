@@ -10,9 +10,9 @@ Get notified ahead of time when the swell is coming in.
 
 1. ~~All regions~~
 2. ~~Search bar for regions~~
-3. Alert-level date range (alert me within X days)
-4. Alert-level quality thresholds (forecast is at least X good)
-5. Frontend copy -> "Alert me when ~ regional forecast is at least ~ within the next ~ days at ~"
+3. ~~Alert-level date range (alert me within X days)~~
+4. ~~Alert-level quality thresholds (forecast is at least X good)~~
+5. ~~Frontend copy -> "Alert me when ~ regional forecast is at least ~ within the next ~ days at ~"~~
 6. ~~Frontend jquery or whatever to alert on missing fields / submission correct~~ (good enough)
 
 ## WOULD BE NICE BUT NOT ESSENTIAL
