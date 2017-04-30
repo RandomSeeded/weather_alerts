@@ -7,10 +7,7 @@ $(function() {
       var elem = data[i];
       body[elem.name] = elem.value;
     }
-
-    // TODO (nw): remove this once added to the html
-    body.threshold = "fair";
-    body.withinPeriod = 4;
+    body.withinPeriod = body.withinPeriod.replace(/days|day/, '').trim();
 
     $.post('http://localhost:1080/api/subscribe', body, function(res) {
       $('#subscribe-success').fadeIn();
