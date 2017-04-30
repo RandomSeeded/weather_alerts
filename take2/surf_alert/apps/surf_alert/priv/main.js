@@ -9,7 +9,9 @@ $(function() {
     }
     body.withinPeriod = body.withinPeriod.replace(/days|day/, '').trim();
 
-    $.post('/api/subscribe', body, function(res) {
+    var SUBSCRIBE_URL = window.location.href + 'api/subscribe';
+
+    $.post(SUBSCRIBE_URL, body, function(res) {
       $('#subscribe-success').fadeIn();
       setTimeout(function() {
         $('#subscribe-success').fadeOut();
