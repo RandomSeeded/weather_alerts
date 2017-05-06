@@ -45,7 +45,7 @@ init([]) ->
         5000,
         supervisor,
         []}],
-    {ok, { {one_for_one, 0, 1}, RunnerSpecs ++ ApiSupervisor ++ EmailSupervisor }}.
+    {ok, { {one_for_one, 5, 30}, RunnerSpecs ++ ApiSupervisor ++ EmailSupervisor }}.
 %%====================================================================
 %% Internal functions
 %%====================================================================
