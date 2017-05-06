@@ -31,7 +31,7 @@ internal_run(Name) ->
   % TODO (nw): rename things to follow surfline_definitions conventions
   #spot{surfline_spotId = SpotId, internal_id = RegionId} = lists:keyfind(Name, #spot.internal_id, ?Surfline_definitions),
   % TODO (nw): yield api & mongo queries to run in parallel
-  RegionalForecasts = [maps:get(Forecast, ?Surfline_qualities) || Forecast <- surfline_api:get_forecast(SpotId)],
+  RegionalForecasts = [maps:get(Forecast, ?Surfline_qualities, -1) || Forecast <- surfline_api:get_forecast(SpotId)],
   % TODO (nw): this should be a hash and not a list
   TopForecastInPeriod = get_running_maximum([], 0, RegionalForecasts),
   EmailsForRegion = mongo_handler:get_emails_for_region(RegionId),
